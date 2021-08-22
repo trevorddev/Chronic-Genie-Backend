@@ -122,3 +122,31 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
             raise AuthenticationFailed('The reset link is invalid', 401)
         return super().validate(attrs)
+
+
+class AccountPropertiesSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Account
+		extra_kwargs = {'password': {'write_only': True, "allow_blank": True}}
+		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender']
+
+	def create(self, validated_data):
+		user = super().create(validated_data)
+		user.set_password(validated_data['password'])
+		user.save()
+		return user
+
+	def update(self, instance, validated_data):
+
+		# removing password because we need to check whether is is empty or not and save the hash password
+		password = validated_data.pop("password")
+		user = super().update(instance, validated_data)
+		try:
+			if password:
+				# saving hash password
+				user.set_password(password)
+				user.save()
+		except KeyError:
+			pass
+		return user
