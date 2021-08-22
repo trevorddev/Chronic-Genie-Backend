@@ -7,7 +7,9 @@ from user.api.views import(
     # VerifyEmail, 
     PasswordTokenCheckAPI, 
     RequestPasswordResetEmail,
-    passwordResetView
+    passwordResetView,
+    account_properties_view,
+    update_account_view
 
 )
 
@@ -20,6 +22,8 @@ urlpatterns = [
 	path('register', registration_view, name="register"),
     path('login', ObtainAuthTokenView.as_view(), name="login"), # -> see user/api/views.py for response and url info
 	path('logout', Logout.as_view(), name="logout"),
+    path('properties', account_properties_view, name="properties"),
+    path('properties/update', update_account_view, name="update"),
 
     path('request-reset-email/', RequestPasswordResetEmail.as_view(),
          name="request-reset-email"),

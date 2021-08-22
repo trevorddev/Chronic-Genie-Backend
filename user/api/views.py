@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
-from user.api.serializers import RegistrationSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer
+from user.api.serializers import RegistrationSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, AccountPropertiesSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import generics
 from django.shortcuts import render
@@ -206,3 +207,37 @@ def passwordResetView(request):
 		return render(request, 'password_reset.html', context)
 	except Exception as ex:
 		return render(request, 'password_reset_error.html', {"message": "Token Expires, try to generate token again"})
+
+
+@api_view(['GET', ])
+@permission_classes((IsAuthenticated, ))
+def account_properties_view(request):
+
+	try:
+		account = request.user
+	except Account.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+	if request.method == 'GET':
+		serializer = AccountPropertiesSerializer(account)
+		return Response(serializer.data)
+
+
+
+@api_view(['PUT',])
+@permission_classes((IsAuthenticated, ))
+def update_account_view(request):
+
+	try:
+		account = request.user
+	except Account.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+		
+	if request.method == 'PUT':
+		serializer = AccountPropertiesSerializer(account, data=request.data)
+		data = {}
+		if serializer.is_valid():
+			serializer.save()
+			data['response'] = 'Account update success'
+			return Response(data=data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
