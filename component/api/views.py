@@ -6,105 +6,76 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 
-from component.models import Food
-from component.api.serializers import FoodSerializer
+from component.models import AppSettings, Food
+from .modules import food_crud, aggravator_crud
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def getAppSettings(request):
+	
+	user = request.user
+
+	appsettings = AppSettings.objects.last()
+	response = appsettings.__dict__
+
+	# removing unwanted field
+	del response["_state"]
+
+	# get selected foods
+	selectedFoods = Food.objects.filter(user=user, selected=True).values()
+
+	response["food"] = selectedFoods
+	# print(response)
+
+	return Response(data=response, status = status.HTTP_200_OK)
 
 
-# class FoodCreateRetrieve(generics.ListCreateAPIView):
-    
-# 	queryset = Food.objects.all()
-# 	serializer_class = FoodSerializer
-
-# 	def get_queryset(self):
-# 		user = self.request.user
-# 		return Food.objects.filter(user=user)
-
-# 	def perform_create(self, serializer):
-# 		serializer.save(user=self.request.user, )
-
-# 	def perform_update(self, serializer):
-# 		serializer.save(user=self.request.user)
+@api_view(['GET', 'POST'])
+@permission_classes((IsAuthenticated, ))
+def ListCreateView(request, component):
+	
+    if component == "food":
+        if request.method == 'POST':
+            return food_crud.create(request)
+	
+        if request.method == 'GET':
+            return food_crud.get_all(request)
 
 
+    if component == "aggravator":
+        if request.method == 'POST':
+            return aggravator_crud.create(request)
+	
+        if request.method == 'GET':
+            return aggravator_crud.get_all(request)
 
-# class FoodAPIView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Food.objects.all()
-#     serializer_class = FoodSerializer
-
-
-
-class FoodRetrieveAll(generics.ListAPIView):
-    
-	queryset = Food.objects.all()
-	serializer_class = FoodSerializer
-
-	def get_queryset(self):
-		user = self.request.user
-		return Food.objects.filter(user=user)
-
-
-
+	
 @api_view(['GET', 'PUT', 'DELETE' ])
 @permission_classes((IsAuthenticated, ))
-def api_detail_update_delete_food_view(request, pk):
+def RetrieveUpdateDestroyView(request, component, pk):
 
+    if component == "food":
+        if request.method == 'GET':
+            return food_crud.retrieve(request, pk)
 	
-	try:
-		food = Food.objects.get(id=pk)
-	except Food.DoesNotExist:
-		return Response(status=status.HTTP_404_NOT_FOUND)
-	user = request.user
-	if food.user != user:
-		return Response({'response':"You don't have permission to edit that."}, status=status.HTTP_401_UNAUTHORIZED) 
+        if request.method == 'PUT':
+            return food_crud.update(request, pk)
 
-	if request.method == 'GET':
-		serializer = FoodSerializer(food)
-		return Response(serializer.data)
-
-	if request.method == 'PUT':
-		serializer = FoodSerializer(food, data=request.data, partial=True)
-		if serializer.is_valid():
-			food = serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	if request.method == 'DELETE':
-		operation = food.delete()
-		data = {}
-		if operation:
-			data['response'] = "success"
-		return Response(data=data, status = status.HTTP_200_OK)
+        if request.method == 'DELETE':
+            return food_crud.delete(request, pk)
 
 
-@api_view(['POST'])
-@permission_classes((IsAuthenticated,))
-def api_create_food_view(request):
-	print("here")
-	if request.method == 'POST':
-
-		data = request.data
-		data['user'] = request.user.pk
-		serializer = FoodSerializer(data=data)
-
-		data = {}
-		if serializer.is_valid():
-			food = serializer.save()
-			data['response'] = "success"
-			return Response(data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# @api_view(['GET', ])
-# @permission_classes((IsAuthenticated, ))
-# def api_list_food_view(request):
+    if component == "aggravator":
+        if request.method == 'GET':
+            return aggravator_crud.retrieve(request, pk)
 	
-# 	user = request.user
-	
-# 	try:
-# 		food = Food.objects.filter(user=user)
-# 	except Food.DoesNotExist:
-# 		return Response(status=status.HTTP_404_NOT_FOUND)
-	
-# 	if request.method == 'GET':
-# 		serializer = FoodSerializer(food)
-# 		return Response(serializer.data)
+        if request.method == 'PUT':
+            return aggravator_crud.update(request, pk)
+
+        if request.method == 'DELETE':
+            return aggravator_crud.delete(request, pk)
+
+
+
+
+
