@@ -6,7 +6,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 
-from component.models import AppSettings, Food
+from component.models import (
+	AppSettings, 
+	Aggravator, 
+	Comorbidity, 
+	DailyMedication, 
+	FlareMedication, 
+	Food, 
+	Symptom,
+)
+
 from .modules import (
     food_crud, 
     aggravator_crud, 
@@ -30,8 +39,24 @@ def getAppSettings(request):
 
 	# get selected foods
 	selectedFoods = Food.objects.filter(user=user, selected=True).values()
+	response["Food"] = selectedFoods
 
-	response["food"] = selectedFoods
+	selectedAggravators = Aggravator.objects.filter(user=user, selected=True).values()
+	response["Aggravator"] = selectedAggravators
+
+	selectedSymptoms = Symptom.objects.filter(user=user, selected=True).values()
+	response["Symptom"] = selectedSymptoms
+
+	selectedComorbiditys = Comorbidity.objects.filter(user=user, selected=True).values()
+	response["Comorbidity"] = selectedComorbiditys
+
+	selectedFlareMedication = FlareMedication.objects.filter(user=user, selected=True).values()
+	response["FlareMedication"] = selectedFlareMedication
+
+	selectedDailyMedication = DailyMedication.objects.filter(user=user, selected=True).values()
+	response["DailyMedication"] = selectedDailyMedication
+
+
 	# print(response)
 
 	return Response(data=response, status = status.HTTP_200_OK)
