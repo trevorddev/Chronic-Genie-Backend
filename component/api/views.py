@@ -7,7 +7,14 @@ from rest_framework import status
 
 
 from component.models import AppSettings, Food
-from .modules import food_crud, aggravator_crud
+from .modules import (
+    food_crud, 
+    aggravator_crud, 
+    symptom_crud, 
+    comorbidity_crud, 
+    dailyMedication_crud, 
+    flareMedication_crud,
+)
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -49,6 +56,38 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return aggravator_crud.get_all(request)
 
+    
+    if component == "symptom":
+        if request.method == 'POST':
+            return symptom_crud.create(request)
+	
+        if request.method == 'GET':
+            return symptom_crud.get_all(request)
+
+
+    if component == "comorbidity":
+        if request.method == 'POST':
+            return comorbidity_crud.create(request)
+	
+        if request.method == 'GET':
+            return comorbidity_crud.get_all(request)
+
+
+    if component == "dailyMedication":
+        if request.method == 'POST':
+            return dailyMedication_crud.create(request)
+	
+        if request.method == 'GET':
+            return dailyMedication_crud.get_all(request)
+
+
+    if component == "flareMedication":
+        if request.method == 'POST':
+            return flareMedication_crud.create(request)
+	
+        if request.method == 'GET':
+            return flareMedication_crud.get_all(request)
+
 	
 @api_view(['GET', 'PUT', 'DELETE' ])
 @permission_classes((IsAuthenticated, ))
@@ -74,6 +113,50 @@ def RetrieveUpdateDestroyView(request, component, pk):
 
         if request.method == 'DELETE':
             return aggravator_crud.delete(request, pk)
+
+
+    if component == "symptom":
+        if request.method == 'GET':
+            return symptom_crud.retrieve(request, pk)
+	
+        if request.method == 'PUT':
+            return symptom_crud.update(request, pk)
+
+        if request.method == 'DELETE':
+            return symptom_crud.delete(request, pk)
+
+
+    if component == "comorbidity":
+        if request.method == 'GET':
+            return comorbidity_crud.retrieve(request, pk)
+	
+        if request.method == 'PUT':
+            return comorbidity_crud.update(request, pk)
+
+        if request.method == 'DELETE':
+            return comorbidity_crud.delete(request, pk)
+
+
+    if component == "dailyMedication":
+        if request.method == 'GET':
+            return dailyMedication_crud.retrieve(request, pk)
+	
+        if request.method == 'PUT':
+            return dailyMedication_crud.update(request, pk)
+
+        if request.method == 'DELETE':
+            return dailyMedication_crud.delete(request, pk)
+
+
+    if component == "flareMedication":
+        if request.method == 'GET':
+            return flareMedication_crud.retrieve(request, pk)
+	
+        if request.method == 'PUT':
+            return flareMedication_crud.update(request, pk)
+
+        if request.method == 'DELETE':
+            return flareMedication_crud.delete(request, pk)
 
 
 
