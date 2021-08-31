@@ -20,4 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/account/', include('user.api.urls', 'account_api')),
     path('api/component/', include('component.api.urls', 'component_api')),
+    path('api/stats/', include('stats.api.urls', 'stats_api')),
+
 ]

@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-%@@-9yk2bd8+i@nt_@3l3*6os1p#n!$&wv=lfhc*b7gka(84t5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["54.153.85.99"]
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'user',
     'component',
+    'stats',
 ]
 
 REST_FRAMEWORK = {

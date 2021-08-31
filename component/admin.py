@@ -7,7 +7,7 @@ from component.models import (
 	Symptom, 
 	Comorbidity, 
 	DailyMedication, 
-	FlareMedication
+	FlareMedication,
 )
 
 class AppSettingsAdmin(admin.ModelAdmin):

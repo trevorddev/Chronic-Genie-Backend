@@ -29,7 +29,7 @@ class Food(models.Model):
     selected                = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.first_name + " / " + self.name
+        return self.user.email + " / " + self.name
 
 
 class Aggravator(models.Model):
@@ -113,18 +113,6 @@ class FlareMedication(models.Model):
         return self.user.email + " / " + self.name
 
 
-
-
-# class daily_report(models.Model):
-#     user                    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     date                    = models.DateField(auto_now=True)
-#     rating                  = models.IntegerField(default=0)
-#     notes                   = models.CharField(max_length=500)
-    
-
-# class daily_report_foods(models.Model):
-#     daily_report_fk         = models.ForeignKey(daily_report, on_delete=models.CASCADE)
-#     food_fk                 = models.ForeignKey(Food, on_delete=models.CASCADE)
 
 
 

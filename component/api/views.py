@@ -39,22 +39,22 @@ def getAppSettings(request):
 
 	# get selected foods
 	selectedFoods = Food.objects.filter(user=user, selected=True).values()
-	response["Food"] = selectedFoods
+	response["food"] = selectedFoods
 
 	selectedAggravators = Aggravator.objects.filter(user=user, selected=True).values()
-	response["Aggravator"] = selectedAggravators
+	response["aggravator"] = selectedAggravators
 
 	selectedSymptoms = Symptom.objects.filter(user=user, selected=True).values()
-	response["Symptom"] = selectedSymptoms
+	response["symptom"] = selectedSymptoms
 
 	selectedComorbiditys = Comorbidity.objects.filter(user=user, selected=True).values()
-	response["Comorbidity"] = selectedComorbiditys
+	response["comorbidity"] = selectedComorbiditys
 
 	selectedFlareMedication = FlareMedication.objects.filter(user=user, selected=True).values()
-	response["FlareMedication"] = selectedFlareMedication
+	response["flareMedication"] = selectedFlareMedication
 
 	selectedDailyMedication = DailyMedication.objects.filter(user=user, selected=True).values()
-	response["DailyMedication"] = selectedDailyMedication
+	response["dailyMedication"] = selectedDailyMedication
 
 
 	# print(response)
