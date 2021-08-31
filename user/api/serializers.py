@@ -3,7 +3,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.exceptions import AuthenticationFailed
-
+import json
 
 from user.models import Account
 
@@ -23,10 +23,12 @@ from user.models import Account
 class RegistrationSerializer(serializers.ModelSerializer):
 
 	password2 				= serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
+	main_conditions         = serializers.ListField(allow_empty=True)
+	medical_conditions         = serializers.ListField(allow_empty=True)
+	
 	class Meta:
 		model = Account
-		fields = ['email', 'first_name', 'date_of_birth', 'gender', 'password', 'password2']
+		fields = ['email', 'first_name', 'date_of_birth', 'gender', 'password', 'password2', 'race', 'main_conditions', 'medical_conditions', "privacy_preference"]
 		extra_kwargs = {
 				'password': {'write_only': True},
 		}	
@@ -38,7 +40,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 					email=self.validated_data['email'],
 					first_name=self.validated_data['first_name'],
                     date_of_birth=self.validated_data['date_of_birth'],
-                    gender=self.validated_data['gender']
+                    gender=self.validated_data['gender'],
+                    race=self.validated_data['race'],
+					main_conditions=json.dumps(self.validated_data['main_conditions']),
+					medical_conditions=json.dumps(self.validated_data['medical_conditions']),
+					privacy_preference=self.validated_data['privacy_preference']
 				)
 		password = self.validated_data['password']
 		password2 = self.validated_data['password2']
