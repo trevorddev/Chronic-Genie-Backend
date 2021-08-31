@@ -40,7 +40,7 @@ class MyAccountManager(BaseUserManager):
 
 class Account(AbstractBaseUser):
     email 					= models.EmailField(verbose_name="email", max_length=60, unique=True)
-    first_name 				= models.CharField(max_length=30, unique=True)
+    first_name 				= models.CharField(max_length=30)
     date_of_birth           = models.DateField(verbose_name='date of birth', blank=True, null=True)
     gender                  = models.CharField(max_length=10, blank=True, null=True)
     date_joined				= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
