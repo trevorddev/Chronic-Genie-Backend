@@ -24,13 +24,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 	password2 				= serializers.CharField(style={'input_type': 'password'}, write_only=True)
 	main_conditions         = serializers.ListField(allow_empty=True)
-	medical_conditions         = serializers.ListField(allow_empty=True)
+	medical_conditions      = serializers.ListField(allow_empty=True)
 	
 	class Meta:
 		model = Account
 		fields = ['email', 'first_name', 'date_of_birth', 'gender', 'password', 'password2', 'race', 'didOnboarding', 'main_conditions', 'medical_conditions', "privacy_preference"]
 		extra_kwargs = {
 				'password': {'write_only': True},
+                'didOnboarding': {'required': False, 'default': False},
 		}	
 
 
@@ -136,7 +137,7 @@ class AccountPropertiesSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
 		extra_kwargs = {'password': {'write_only': True, "allow_blank": True}}
-		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender']
+		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender', 'didOnboarding']
 
 	def create(self, validated_data):
 		user = super().create(validated_data)
