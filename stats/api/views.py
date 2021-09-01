@@ -111,90 +111,95 @@ def get_daily_report(request):
 	request_body = json.loads(request.body)
 
 	startDate = request_body['startDate'] if "startDate" in request_body and request_body["startDate"] else ""
-	endDate = request_body['endDate'] if "endDate" in request_body and request_body["startDate"] else ""
+	endDate = request_body['endDate'] if "endDate" in request_body and request_body["endDate"] else ""
 
 	if not startDate or not endDate:
 			return Response(data={"Response": "startDate or endDate not provided"}, status = status.HTTP_400_BAD_REQUEST)
 
 	result = {}
 	try:
-		record = daily_report.objects.filter(user=user, date=startDate).values()[0]
-		print(record)
-		result[startDate] = record
+		records = daily_report.objects.filter(user=user, date__range=(startDate, endDate)).values()
+		
 	except Exception as ex:
+		print(str(ex))
 		return Response(data={}, status = status.HTTP_200_OK)
 
-	# get foods for a specific date
-	foodss = daily_report_food.objects.filter(
-												daily_report_id= record["id"], 
-												food_id__selected=True,
-												food_id__user = user).select_related('food_id')
-	
-	if foodss:
-		result[startDate]["foods"] = []
-		for food in foodss:
-			temp = food.food_id.__dict__
-			temp.pop('_state', None)
-			result[startDate]["foods"].append(temp)
+	for record in records:
+		date = str(record["date"])
+		result[date] = record
 
 
-	# get aggravators for a specific date
-	aggravatorss = daily_report_aggravator.objects.filter(
-												daily_report_id= record["id"], 
-												aggravator_id__selected=True,
-												aggravator_id__user = user).select_related('aggravator_id')
-	
-	if aggravatorss:
-		result[startDate]["aggravators"] = []
-		for aggravator in aggravatorss:
-			temp = aggravator.aggravator_id.__dict__
-			temp.pop('_state', None)
-			result[startDate]["aggravators"].append(temp)
+		# get foods for a specific date
+		foodss = daily_report_food.objects.filter(
+													daily_report_id= record["id"], 
+													food_id__selected=True,
+													food_id__user = user).select_related('food_id')
+		
+		if foodss:
+			result[date]["foods"] = []
+			for food in foodss:
+				temp = food.food_id.__dict__
+				temp.pop('_state', None)
+				result[date]["foods"].append(temp)
 
 
-	# get symptoms for a specific date
-	symptomss = daily_report_symptom.objects.filter(
-												daily_report_id= record["id"], 
-												symptom_id__selected=True,
-												symptom_id__user = user).select_related('symptom_id')
-	
-	if symptomss:
-		result[startDate]["symptoms"] = []
-		for symptom in symptomss:
-			temp = symptom.symptom_id.__dict__
-			temp.pop('_state', None)
-			result[startDate]["symptoms"].append(temp)
+		# get aggravators for a specific date
+		aggravatorss = daily_report_aggravator.objects.filter(
+													daily_report_id= record["id"], 
+													aggravator_id__selected=True,
+													aggravator_id__user = user).select_related('aggravator_id')
+		
+		if aggravatorss:
+			result[date]["aggravators"] = []
+			for aggravator in aggravatorss:
+				temp = aggravator.aggravator_id.__dict__
+				temp.pop('_state', None)
+				result[date]["aggravators"].append(temp)
 
 
-	# get comorbiditys for a specific date
-	comorbidityss = daily_report_comorbidity.objects.filter(
-												daily_report_id= record["id"], 
-												comorbidity_id__selected=True,
-												comorbidity_id__user = user).select_related('comorbidity_id')
-	
-	if comorbidityss:
-		result[startDate]["comorbidities"] = []
-		for comorbidity in comorbidityss:
-			temp = comorbidity.comorbidity_id.__dict__
-			temp.pop('_state', None)
-			result[startDate]["comorbidities"].append(temp)
+		# get symptoms for a specific date
+		symptomss = daily_report_symptom.objects.filter(
+													daily_report_id= record["id"], 
+													symptom_id__selected=True,
+													symptom_id__user = user).select_related('symptom_id')
+		
+		if symptomss:
+			result[date]["symptoms"] = []
+			for symptom in symptomss:
+				temp = symptom.symptom_id.__dict__
+				temp.pop('_state', None)
+				result[date]["symptoms"].append(temp)
 
-	# get flare medications for a specific date
-	flareMedicationss = daily_report_flare_medication.objects.filter(
-												daily_report_id= record["id"], 
-												flare_medication_id__selected=True,
-												flare_medication_id__user = user).select_related('flare_medication_id')
-	
 
-	
-	if flareMedicationss:
-		result[startDate]["flareMedications"] = []
-		for flareMedications in flareMedicationss:
-			temp = flareMedications.flare_medication_id.__dict__
-			temp.pop('_state', None)
-			temp["pills"] = flareMedications.pills
-			result[startDate]["flareMedications"].append(temp)
-	
-	
+		# get comorbiditys for a specific date
+		comorbidityss = daily_report_comorbidity.objects.filter(
+													daily_report_id= record["id"], 
+													comorbidity_id__selected=True,
+													comorbidity_id__user = user).select_related('comorbidity_id')
+		
+		if comorbidityss:
+			result[date]["comorbidities"] = []
+			for comorbidity in comorbidityss:
+				temp = comorbidity.comorbidity_id.__dict__
+				temp.pop('_state', None)
+				result[date]["comorbidities"].append(temp)
+
+		# get flare medications for a specific date
+		flareMedicationss = daily_report_flare_medication.objects.filter(
+													daily_report_id= record["id"], 
+													flare_medication_id__selected=True,
+													flare_medication_id__user = user).select_related('flare_medication_id')
+		
+
+		
+		if flareMedicationss:
+			result[date]["flareMedications"] = []
+			for flareMedications in flareMedicationss:
+				temp = flareMedications.flare_medication_id.__dict__
+				temp.pop('_state', None)
+				temp["pills"] = flareMedications.pills
+				result[date]["flareMedications"].append(temp)
+		
+		
 	return Response(data=result, status = status.HTTP_200_OK)
 
