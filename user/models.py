@@ -43,6 +43,7 @@ class Account(AbstractBaseUser):
     first_name 				= models.CharField(max_length=30)
     date_of_birth           = models.DateField(verbose_name='date of birth', blank=True, null=True)
     gender                  = models.CharField(max_length=10, blank=True, null=True)
+    didOnboarding           = models.BooleanField(default=False)
     race					= models.CharField(max_length=30, blank=True, null=True)
     main_conditions			= models.CharField(max_length=500, blank=True, null=True)
     medical_conditions		= models.CharField(max_length=500, blank=True, null=True)

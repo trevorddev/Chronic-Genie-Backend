@@ -28,7 +28,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Account
-		fields = ['email', 'first_name', 'date_of_birth', 'gender', 'password', 'password2', 'race', 'main_conditions', 'medical_conditions', "privacy_preference"]
+		fields = ['email', 'first_name', 'date_of_birth', 'gender', 'password', 'password2', 'race', 'didOnboarding', 'main_conditions', 'medical_conditions', "privacy_preference"]
 		extra_kwargs = {
 				'password': {'write_only': True},
 		}	
@@ -42,6 +42,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
                     date_of_birth=self.validated_data['date_of_birth'],
                     gender=self.validated_data['gender'],
                     race=self.validated_data['race'],
+                    didOnboarding=self.validated_data['didOnboarding'],
 					main_conditions=json.dumps(self.validated_data['main_conditions']),
 					medical_conditions=json.dumps(self.validated_data['medical_conditions']),
 					privacy_preference=self.validated_data['privacy_preference']
