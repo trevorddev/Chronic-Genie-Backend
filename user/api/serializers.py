@@ -134,10 +134,22 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 class AccountPropertiesSerializer(serializers.ModelSerializer):
 
+	main_conditions         = serializers.ListField(allow_empty=True)
+	medical_conditions      = serializers.ListField(allow_empty=True)
+
 	class Meta:
 		model = Account
 		extra_kwargs = {'password': {'write_only': True, "allow_blank": True}}
-		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender', 'didOnboarding']
+		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender', 'race', 'main_conditions', 'medical_conditions', 'privacy_preference', 'didOnboarding']
+
+
+	def to_representation(self, instance):
+		"""Convert string to array """
+		ret = super().to_representation(instance)
+
+		ret['main_conditions'] = json.loads(instance.main_conditions)
+		ret['medical_conditions'] = json.loads(instance.medical_conditions)
+		return ret
 
 	def create(self, validated_data):
 		user = super().create(validated_data)
@@ -149,6 +161,11 @@ class AccountPropertiesSerializer(serializers.ModelSerializer):
 
 		# removing password because we need to check whether is is empty or not and save the hash password
 		password = validated_data.pop("password")
+
+		# removing main_conditions and medical_conditions because we need to convert to convert array to string first
+		validated_data["main_conditions"] = json.dumps(validated_data["main_conditions"])
+		validated_data["medical_conditions"] = json.dumps(validated_data["medical_conditions"])
+
 		user = super().update(instance, validated_data)
 		try:
 			if password:
