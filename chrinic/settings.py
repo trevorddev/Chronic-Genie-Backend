@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'user',
     'component',
     'stats',
+    'adminPanel'
 ]
 
 REST_FRAMEWORK = {

@@ -20,6 +20,25 @@ from .utils import Util
 from django.http import HttpResponsePermanentRedirect
 import os
 from user.api.reset_password_form import SetPasswordForm
+
+from component.models import (
+	Food,
+	Aggravator,
+	Symptom,
+	Comorbidity,
+	DailyMedication,
+	FlareMedication
+)
+
+from adminPanel.models import (
+	Food as appFood,
+	Aggravator as appAggravator,
+	Symptom as appSymptom,
+	Comorbidity as appComorbidity,
+	DailyMedication as appDailyMedication,
+	FlareMedication as appFlareMedication
+)
+
 class CustomRedirect(HttpResponsePermanentRedirect):
 
     allowed_schemes = [os.environ.get('APP_SCHEME'), 'http', 'https']
@@ -42,6 +61,7 @@ def registration_view(request):
 			data['gender'] = account.gender
 			token = Token.objects.get(user=account).key
 			data['token'] = token
+			add_app_settings_to_user(account)
 		else:
 			data = serializer.errors
 		return Response(data)
@@ -241,3 +261,74 @@ def update_account_view(request):
 			data['response'] = 'Account update success'
 			return Response(data=data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+def add_app_settings_to_user(user):
+
+
+	## add default foods to user settings
+	app_foods = appFood.objects.filter(enabled=True).values()
+	for data in app_foods:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		Food(**data).save()
+
+
+	## add default aggravator to user settings
+	app_aggravators = appAggravator.objects.filter(enabled=True).values()
+	for data in app_aggravators:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		Aggravator(**data).save()
+
+
+	## add default symptoms to user settings
+	app_symptoms = appSymptom.objects.filter(enabled=True).values()
+	for data in app_symptoms:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		Symptom(**data).save()
+
+
+	## add default comorbidities to user settings
+	app_comorbidities = appComorbidity.objects.filter(enabled=True).values()
+	for data in app_comorbidities:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		Comorbidity(**data).save()
+
+
+	## add default dailyMedications to user settings
+	app_daily_medications = appDailyMedication.objects.filter(enabled=True).values()
+	for data in app_daily_medications:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		DailyMedication(**data).save()
+
+
+	## add default flareMedications to user settings
+	app_flare_medications = appFlareMedication.objects.filter(enabled=True).values()
+	for data in app_flare_medications:
+		del data["id"]
+		del data["enabled"]
+		data["user"] = user
+		data["userCreated"] = False
+	
+		FlareMedication(**data).save()
+
