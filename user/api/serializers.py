@@ -139,7 +139,7 @@ class AccountPropertiesSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Account
-		extra_kwargs = {'password': {'write_only': True, "allow_blank": True}}
+		extra_kwargs = {'password': {'write_only': True, "allow_blank": True, "required": False, "default": ""}}
 		fields = ['pk', 'email', 'password', 'first_name', 'date_of_birth', 'gender', 'race', 'main_conditions', 'medical_conditions', 'privacy_preference', 'didOnboarding']
 
 
