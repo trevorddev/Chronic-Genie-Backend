@@ -20,9 +20,9 @@ class AppSettingsAdmin(admin.ModelAdmin):
 
 admin.site.register(AppSettings, AppSettingsAdmin)
 
-admin.site.register(Food)
-admin.site.register(Aggravator)
-admin.site.register(Symptom)
-admin.site.register(Comorbidity)
-admin.site.register(DailyMedication)
-admin.site.register(FlareMedication)
+# admin.site.register(Food)
+# admin.site.register(Aggravator)
+# admin.site.register(Symptom)
+# admin.site.register(Comorbidity)
+# admin.site.register(DailyMedication)
+# admin.site.register(FlareMedication)

@@ -10,9 +10,9 @@ from .models import (
 )
 # Register your models here.
 
-admin.site.register(daily_report)
-admin.site.register(daily_report_food)
-admin.site.register(daily_report_aggravator)
-admin.site.register(daily_report_symptom)
-admin.site.register(daily_report_comorbidity)
-admin.site.register(daily_report_flare_medication)
+# admin.site.register(daily_report)
+# admin.site.register(daily_report_food)
+# admin.site.register(daily_report_aggravator)
+# admin.site.register(daily_report_symptom)
+# admin.site.register(daily_report_comorbidity)
+# admin.site.register(daily_report_flare_medication)
