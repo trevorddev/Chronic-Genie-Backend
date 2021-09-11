@@ -25,14 +25,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%@@-9yk2bd8+i@nt_@3l3*6os1p#n!$&wv=lfhc*b7gka(84t5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["54.153.85.99"]
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+EMAIL_BACKEND = 'django_ses.SESBackend'
 
+AWS_ACCESS_KEY_ID = 'AKIAVTQWOOT5PLDI7Q72'
+AWS_SECRET_ACCESS_KEY = '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'
+
+AWS_SES_REGION_NAME = 'us-east-2'
+AWS_SES_REGION_ENDPOINT = 'email.us-east-2.amazonaws.com'
+
+FROM_EMAIL_ADDRESS = "contact@sjogrensdiary.com"
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +55,8 @@ INSTALLED_APPS = [
     'user',
     'component',
     'stats',
-    'adminPanel'
+    'adminPanel',
+    'rangefilter'
 ]
 
 REST_FRAMEWORK = {
