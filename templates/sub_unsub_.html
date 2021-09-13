@@ -1,0 +1,18 @@
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<head>
+</head>
+
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+  data-admin-utc-offset="{% now "Z" %}">
+
+  <div id="container">
+    <p style="text-align:center;font-size: 1.17em;">You are now {{text}}</p>
+    <p style="text-align:center;font-size: 1.17em;">Want to <a href={{link_url}}>{{link_text}}?</a></p>
+    
+  </div>
+<!-- END Container -->
+</body>
+</html>

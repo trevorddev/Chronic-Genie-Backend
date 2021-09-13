@@ -9,7 +9,9 @@ from user.api.views import(
     RequestPasswordResetEmail,
     passwordResetView,
     account_properties_view,
-    update_account_view
+    update_account_view,
+    email_unsubscribe_view,
+    email_resubscribe_view
 
 )
 
@@ -30,5 +32,7 @@ urlpatterns = [
     path('password-reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('reset/', passwordResetView,
          name='password-reset'),
+    path('unsubscribe/<token>/', email_unsubscribe_view, name='unsubscribe-email'),
+    path('resubscribe/<token>/', email_resubscribe_view, name='resubscribe-email'),
 
 ]

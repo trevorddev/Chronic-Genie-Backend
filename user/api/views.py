@@ -9,8 +9,8 @@ from user.api.serializers import RegistrationSerializer, ResetPasswordEmailReque
 from rest_framework.authtoken.models import Token
 from rest_framework import generics
 from django.shortcuts import render
-
-
+from cryptography.fernet import Fernet
+from django.conf import settings
 from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -36,7 +36,8 @@ from adminPanel.models import (
 	Symptom as appSymptom,
 	Comorbidity as appComorbidity,
 	DailyMedication as appDailyMedication,
-	FlareMedication as appFlareMedication
+	FlareMedication as appFlareMedication,
+	MarketingEmail,
 )
 
 class CustomRedirect(HttpResponsePermanentRedirect):
@@ -61,7 +62,12 @@ def registration_view(request):
 			data['gender'] = account.gender
 			token = Token.objects.get(user=account).key
 			data['token'] = token
+
+			# add default app settings to user settings
 			add_app_settings_to_user(account)
+
+			# add email to marketing email db
+			add_user_to_narketing_email_list(account)
 		else:
 			data = serializer.errors
 		return Response(data)
@@ -262,6 +268,43 @@ def update_account_view(request):
 			return Response(data=data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def email_unsubscribe_view(request, token):
+	try:
+		print(token)
+		encMessage = urlsafe_base64_decode(token)
+
+		print("encrypted string: ", encMessage)
+
+		fernet = Fernet(settings.FERNET_KEY)
+		decMessage = fernet.decrypt(encMessage).decode()
+
+		print("decrypted string: ", decMessage)
+
+		relativeLink = reverse('account:resubscribe-email', kwargs={'token': token})
+		return render(request, 'sub_unsub_.html', {"text": "unsubscribed", "link_text": "Resubscribe", "link_url": relativeLink})
+	except Exception as ex:
+		print(str(ex))
+		return render(request, 'admin/500.html')
+
+
+def email_resubscribe_view(request, token):
+	try:
+		print(token)
+		encMessage = urlsafe_base64_decode(token)
+
+		print("encrypted string: ", encMessage)
+
+		fernet = Fernet(settings.FERNET_KEY)
+		decMessage = fernet.decrypt(encMessage).decode()
+
+		print("decrypted string: ", decMessage)
+
+		relativeLink = reverse('account:unsubscribe-email', kwargs={'token': token})
+
+		return render(request, 'sub_unsub_.html', {"text": "re-subscribed", "link_text": "Unsubscribe", "link_url": relativeLink})
+	except Exception as ex:
+		print(str(ex))
+		return render(request, 'admin/500.html')
 
 
 def add_app_settings_to_user(user):
@@ -332,3 +375,8 @@ def add_app_settings_to_user(user):
 	
 		FlareMedication(**data).save()
 
+def add_user_to_narketing_email_list(user):
+	try:
+		MarketingEmail(email=user.email).save()
+	except Exception as ex:
+		print(ex)
