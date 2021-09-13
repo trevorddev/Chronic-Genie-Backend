@@ -31,7 +31,7 @@ class AccountAdmin(UserAdmin):
 	readonly_fields = ('date_joined', 'last_login')
 
 	filter_horizontal = ()
-	list_filter = (('date_joined', DateRangeFilter), 'is_email_subscribed', 'gender', 'last_login')
+	list_filter = (('date_joined', DateRangeFilter), 'gender', 'last_login')
 	fieldsets = ()
 	ordering = ('date_joined',)
 
