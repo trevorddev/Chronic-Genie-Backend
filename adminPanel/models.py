@@ -99,3 +99,11 @@ class FlareMedication(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MarketingEmail(models.Model):
+    email 					= models.EmailField(verbose_name="email", max_length=60, unique=True)
+    is_subscribed           = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.email

@@ -7,6 +7,7 @@ from adminPanel.models import (
     Comorbidity,
     DailyMedication,
     FlareMedication,
+    MarketingEmail
 )
 # Register your models here.
 
@@ -18,3 +19,4 @@ admin.site.register(Symptom)
 admin.site.register(Comorbidity)
 admin.site.register(DailyMedication)
 admin.site.register(FlareMedication)
+admin.site.register(MarketingEmail)
