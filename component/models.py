@@ -3,21 +3,6 @@ from django.conf import settings
 # Create your models here.
 
 
-class AppSettings(models.Model):
-    symptomsMax             = models.IntegerField(default=10)
-    symptomsPreMax          = models.IntegerField(default=20)
-    flareMedicationsMax     = models.IntegerField(default=10)
-    flareMedicationsPreMax  = models.IntegerField(default=20)
-    dailyMedicationsMax     = models.IntegerField(default=10)
-    dailyMedicationsPreMax  = models.IntegerField(default=20)
-    aggravatorsMax          = models.IntegerField(default=10)
-    aggravatorsPreMax       = models.IntegerField(default=20)
-    comorbiditiesMax        = models.IntegerField(default=10)
-    comorbiditiesPreMax     = models.IntegerField(default=20)
-    foodsMax                = models.IntegerField(default=10)
-    foodsPreMax             = models.IntegerField(default=20)
-    consecutiveDaysToFlare  = models.IntegerField(default=3)
-
 class Food(models.Model):
     user                    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name                    = models.CharField(max_length=100)

@@ -11,8 +11,15 @@ from adminPanel.models import (
 )
 # Register your models here.
 
+class AppSettingsAdmin(admin.ModelAdmin):
+	def has_add_permission(self, request):
+		num_objects = self.model.objects.count()
+		if num_objects >= 1:
+			return False
+		else:
+			return True
 
-admin.site.register(AppSettings)
+admin.site.register(AppSettings, AppSettingsAdmin)
 admin.site.register(Food)
 admin.site.register(Aggravator)
 admin.site.register(Symptom)

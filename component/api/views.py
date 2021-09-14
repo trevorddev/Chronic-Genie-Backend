@@ -7,7 +7,6 @@ from rest_framework import status
 
 
 from component.models import (
-	AppSettings, 
 	Aggravator, 
 	Comorbidity, 
 	DailyMedication, 
@@ -16,6 +15,9 @@ from component.models import (
 	Symptom,
 )
 
+from adminPanel.models import (
+    AppSettings
+)
 from .modules import (
     food_crud, 
     aggravator_crud, 
