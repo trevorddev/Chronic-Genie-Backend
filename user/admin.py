@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 import csv
 from django.http import HttpResponse
 from rangefilter.filters import DateRangeFilter
@@ -37,4 +38,5 @@ class AccountAdmin(UserAdmin):
 
 	actions = [export_as_csv]
 
+admin.site.unregister(Group)
 admin.site.register(Account, AccountAdmin)
