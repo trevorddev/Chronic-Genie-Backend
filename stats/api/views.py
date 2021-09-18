@@ -1,9 +1,11 @@
+from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-import json
+import json, math
 
+from sql_utils import query_ReturnRow
 from stats.models import (
 	daily_report,
 	daily_report_food,
@@ -202,4 +204,120 @@ def get_daily_report(request):
 		
 		
 	return Response(data=result, status = status.HTTP_200_OK)
+@api_view(['POST'])
+@permission_classes(())
+def customized_search(request):
+	
+	request_body = json.loads(request.body)
+
+	filters = request_body['filters'] if "filters" in request_body and request_body["filters"] else {}
+	page_number = request_body["page_number"] if "page_number" in request_body and request_body["page_number"] else 1 
+	page_size = request_body["page_size"] if "page_size" in request_body and request_body["page_size"] else 1 
+	
+	if not filters:
+		return Response(data={"Response": {}}, status = status.HTTP_200_OK)
+   
+	limit = (page_number - 1) * page_size
+
+
+	selected_symptoms = filters['selected_symptoms'] if "selected_symptoms" in filters and filters["selected_symptoms"] else []
+	recorded_symptoms = filters['recorded_symptoms'] if "recorded_symptoms" in filters and filters["recorded_symptoms"] else {}
+	medical_conditions = filters['medical_conditions'] if "medical_conditions" in filters and filters["medical_conditions"] else []
+
+	master_query = []
+	if selected_symptoms:
+		sub_query = '''
+						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+						join component_symptom cs on (cs.user_id = ua.id)
+						where cs.selected = TRUE and ({})
+					'''
+		conditions = []
+		for symptom in selected_symptoms:
+			conditions.append("cs.name like '%{}%'".format(symptom))
+		
+		sub_query = sub_query.format(" or ".join(conditions))
+	
+		master_query.append(sub_query)
+
+	if recorded_symptoms:
+		symptoms = recorded_symptoms['symptoms'] if "symptoms" in recorded_symptoms and recorded_symptoms["symptoms"] else []
+		start_date = recorded_symptoms['start_date'] if "start_date" in recorded_symptoms and recorded_symptoms["start_date"] else ""
+		end_date = recorded_symptoms['end_date'] if "end_date" in recorded_symptoms and recorded_symptoms["end_date"] else ""
+
+		if symptoms or start_date or end_date:
+			sub_query = '''
+							select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+							join stats_daily_report sdr on (sdr.user_id = ua.id)
+							join stats_daily_report_symptom sdrs on (sdrs.daily_report_id_id = sdr.id)
+							join component_symptom cs on (cs.id = sdrs.symptom_id_id)
+							where 1=1
+						'''
+			conditions = []
+
+			if symptoms:
+				for symptom in symptoms:
+					conditions.append("cs.name like '%{}%'".format(symptom))
+				
+				sub_query += " and (" + " or ".join(conditions) + ")"
+
+			if start_date and end_date:
+				sub_query += f" and (sdr.date BETWEEN '{start_date}' and '{end_date}')"
+			master_query.append(sub_query)
+	
+	if medical_conditions:
+		sub_query = '''
+						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+						where 1 = 1 and ({})
+					'''
+		conditions = []
+		for mc in medical_conditions:
+			conditions.append("ua.medical_conditions like '%{}%'".format(mc))
+		
+		sub_query = sub_query.format(" or ".join(conditions))
+	
+		master_query.append(sub_query)
+
+
+	sql = (" Union ").join(master_query)
+
+	if not sql:
+		response = {
+			"total_pages": 0,
+			"page_number": 0,
+			"page_size": 0,
+			"result": {}
+		}
+		return Response(data=response, status=status.HTTP_200_OK)
+
+	
+	filtered_query = f'''
+			SELECT * FROM
+				( 
+					{sql}
+				)
+			query
+			LIMIT {page_size} offset {limit}	
+			'''
+	
+	print(filtered_query)
+	result = query_ReturnRow(filtered_query, None, False, True)
+
+	total_query = f'''
+			SELECT count(*) as total FROM
+				( 
+					{sql}
+				)
+			query
+			'''
+	
+	total_count = query_ReturnRow(total_query, None, False, True)[0]["total"]
+
+	response = {
+		"total_pages": math.ceil(total_count / page_size),
+		"page_number": page_number,
+		"page_size": page_size,
+		"result": result
+	}
+
+	return Response(data=response, status=status.HTTP_200_OK)
 
