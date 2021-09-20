@@ -2,6 +2,8 @@ from django.http.response import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render
+
 from rest_framework import status
 import json, math
 
@@ -204,9 +206,12 @@ def get_daily_report(request):
 		
 		
 	return Response(data=result, status = status.HTTP_200_OK)
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @permission_classes(())
 def customized_search(request):
+	
+	if request.method == 'GET':
+		return render(request, 'admin/filter.html', {"message": "Token Expires, try to generate token again"})
 	
 	request_body = json.loads(request.body)
 

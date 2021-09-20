@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical</title>
+    <!-- {% load static %} -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    />
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" />
+    <link rel="stylesheet" href="{% static "css/dataTables.bootstrap4.min.css" %}" />
+    <link rel="stylesheet" href="{% static "css/responsive.dataTables.min.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "css/daterangepicker.min.css" %}" />
+    <link rel="stylesheet" href="{% static "css/style.css" %}"/>
+  </head>
+  <body>
+    <main>
+      <nav class="navbar navbar-light bg-theme">
+        <a class="navbar-brand" href="/admin">
+          Django administration
+        </a>
+      </nav>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="sides mt-4">
+              <h5 class="font-weight-medium mb-4">Filter By</h5>
+              <div id="accordion">
+                <div class="mb-4">
+                  <div id="one">
+                    <button
+                      class="
+                        btn
+                        p-0
+                        d-flex
+                        justify-content-between
+                        w-100
+                        text-left
+                        bg-transparent
+                      "
+                      data-toggle="collapse"
+                      data-target="#collapseOne"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      <span class="text-normal">Medical Condition</span>
+                      <span class="icon"
+                        ><i class="far fa-chevron-up"></i
+                      ></span>
+                    </button>
+                  </div>
+
+                  <div id="collapseOne" class="collapse multi-collapse show">
+                    <div class="multi-select medical">
+                      <div id="tags1" class="tags form-control"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div id="two">
+                    <button
+                      class="
+                        btn
+                        p-0
+                        d-flex
+                        justify-content-between
+                        w-100
+                        text-left
+                        bg-transparent
+                      "
+                      data-toggle="collapse"
+                      data-target="#collapseTwo"
+                      aria-expanded="true"
+                      aria-controls="collapseTwo"
+                    >
+                      <span class="text-normal">Selected Symptoms</span>
+                      <span class="icon"
+                        ><i class="far fa-chevron-up"></i
+                      ></span>
+                    </button>
+                  </div>
+
+                  <div id="collapseTwo" class="collapse multi-collapse show">
+                    <div class="multi-select ssymptoms">
+                      <div id="tags2" class="tags form-control"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div id="three">
+                    <button
+                      class="
+                        btn
+                        p-0
+                        d-flex
+                        justify-content-between
+                        w-100
+                        text-left
+                        bg-transparent
+                      "
+                      data-toggle="collapse"
+                      data-target="#collapseThree"
+                      aria-expanded="true"
+                      aria-controls="collapseThree"
+                    >
+                      <span class="text-normal">Recorded Symptoms</span>
+                      <span class="icon"
+                        ><i class="far fa-chevron-up"></i
+                      ></span>
+                    </button>
+                  </div>
+
+                  <div id="collapseThree" class="collapse multi-collapse show">
+                    <div class="multi-select rsymptoms">
+                      <div id="tags3" class="tags form-control"></div>
+                      <div class="drp mt-1">
+                        <input
+                          type="text"
+                          class="text-normal form-control rounded-0"
+                          id="symptomstimes"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div id="two">
+                    <button
+                      class="
+                        btn
+                        p-0
+                        d-flex
+                        justify-content-between
+                        w-100
+                        text-left
+                        bg-transparent
+                      "
+                      data-toggle="collapse"
+                      data-target="#collapseFour"
+                      aria-expanded="true"
+                      aria-controls="collapseFour"
+                    >
+                      <span class="text-normal">Daily Medication</span>
+                      <span class="icon"
+                        ><i class="far fa-chevron-up"></i
+                      ></span>
+                    </button>
+                  </div>
+
+                  <div id="collapseFour" class="collapse multi-collapse show">
+                    <div class="multi-select daily">
+                      <div id="tags4" class="tags form-control"></div>
+                      <div class="drp mt-1">
+                        <input
+                          type="text"
+                          class="text-normal form-control rounded-0"
+                          id="dailytimes"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="btn btn-info btn-sm btn-block"
+                  onclick="formSubmit()"
+                  type="button"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-9">
+            <div class="mt-4" id="showResult">
+              <h5 class="font-weight-medium mb-4">Results</h5>
+              <div class="spinner-div text-center">
+                <div
+                  class="spinner-border text-info"
+                  style="width: 3rem; height: 3rem"
+                  role="status"
+                >
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div class="table-responsive" id="renderTable">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="text/javascript" src="{% static "js/jquery-3.6.0.min.js" %}" ></script>
+    <script type="text/javascript" src="{% static "js/popper.min.js" %}" ></script>
+
+    <script type="text/javascript" src="{% static "./js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "./js/jquery.dataTables.min.js" %}"></script>
+    <script
+      type="text/javascript"
+      src="{% static "./js/dataTables.responsive.min.js" %}"
+    ></script>
+    <script
+      type="text/javascript"
+      src="{% static "./js/dataTables.bootstrap4.min.js" %}"
+    ></script>
+    <script type="text/javascript" src="{% static "./js/moment.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "./js/daterangepicker.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "./js/magicsuggest.js" %}"></script>
+    <script type="text/javascript" src="{% static "./js/script.js" %}"></script>
+  </body>
+</html>
