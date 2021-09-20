@@ -211,7 +211,7 @@ def get_daily_report(request):
 def customized_search(request):
 	
 	if request.method == 'GET':
-		return render(request, 'admin/filter.html', {"message": "Token Expires, try to generate token again"})
+		return render(request, 'filter.html', {"message": "Token Expires, try to generate token again"})
 	
 	request_body = json.loads(request.body)
 
