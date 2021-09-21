@@ -3,12 +3,12 @@ var tags1, tags2, tags3, tags4;
 let query;
 let info = {
   symptoms: {
-    start: moment(moment().startOf("hour")).format("YYYY-MM-DD"),
-    end: moment(moment().startOf("hour").add(32, "hour")).format("YYYY-MM-DD"),
+    start: '',
+    end: '',
   },
   daily: {
-    start: moment(moment().startOf("hour")).format("YYYY-MM-DD"),
-    end: moment(moment().startOf("hour").add(32, "hour")).format("YYYY-MM-DD"),
+    start: '',
+    end: '',
   },
 };
 
@@ -37,10 +37,9 @@ $(function () {
   $("#symptomstimes").daterangepicker(
     {
       timePicker: true,
-      startDate: moment().startOf("hour"),
-      endDate: moment().startOf("hour").add(32, "hour"),
       locale: {
-        format: "M/DD hh:mm A",
+        // format: "M/DD hh:mm A",
+        format: "MM/DD/YYYY",
       },
     },
     function (start, end, label) {
@@ -51,10 +50,9 @@ $(function () {
   $("#dailytimes").daterangepicker(
     {
       timePicker: true,
-      startDate: moment().startOf("hour"),
-      endDate: moment().startOf("hour").add(32, "hour"),
       locale: {
-        format: "M/DD hh:mm A",
+        // format: "M/DD hh:mm A",
+        format: "MM/DD/YYYY",
       },
     },
     function (start, end, label) {
@@ -67,6 +65,8 @@ $(function () {
     width: "300px",
     display: "inline-block",
   });
+
+  $('#dailytimes, #symptomstimes').val('').attr("placeholder","Please Select Date");
 });
 
 function formSubmit() {
