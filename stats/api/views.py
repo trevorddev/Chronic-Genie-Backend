@@ -211,7 +211,7 @@ def get_daily_report(request):
 def customized_search(request):
 	
 	if request.method == 'GET':
-		return render(request, 'filter.html', {"message": "Token Expires, try to generate token again"})
+		return render(request, 'filter.html', {})
 	
 	request_body = json.loads(request.body)
 
@@ -232,7 +232,7 @@ def customized_search(request):
 	master_query = []
 	if selected_symptoms:
 		sub_query = '''
-						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
 						join component_symptom cs on (cs.user_id = ua.id)
 						where cs.selected = TRUE and ({})
 					'''
@@ -251,7 +251,7 @@ def customized_search(request):
 
 		if symptoms or start_date or end_date:
 			sub_query = '''
-							select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+							select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
 							join stats_daily_report sdr on (sdr.user_id = ua.id)
 							join stats_daily_report_symptom sdrs on (sdrs.daily_report_id_id = sdr.id)
 							join component_symptom cs on (cs.id = sdrs.symptom_id_id)
@@ -271,7 +271,7 @@ def customized_search(request):
 	
 	if medical_conditions:
 		sub_query = '''
-						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender from user_account ua 
+						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
 						where 1 = 1 and ({})
 					'''
 		conditions = []
@@ -286,14 +286,8 @@ def customized_search(request):
 	sql = (" Union ").join(master_query)
 
 	if not sql:
-		response = {
-			"total_pages": 0,
-			"page_number": 0,
-			"page_size": 0,
-			"result": {}
-		}
-		return Response(data=response, status=status.HTTP_200_OK)
-
+		sql = "select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua"
+		
 	
 	filtered_query = f'''
 			SELECT * FROM
@@ -307,7 +301,7 @@ def customized_search(request):
 	print(filtered_query)
 	result = query_ReturnRow(filtered_query, None, False, True)
 
-	total_query = f'''
+	filter_count_query = f'''
 			SELECT count(*) as total FROM
 				( 
 					{sql}
@@ -315,12 +309,22 @@ def customized_search(request):
 			query
 			'''
 	
-	total_count = query_ReturnRow(total_query, None, False, True)[0]["total"]
+	filter_count = query_ReturnRow(filter_count_query, None, False, True)[0]["total"]
+
+
+	total_count_query = f'''
+			select count(*) as total from user_account ua
+			'''
+	
+	total_count = query_ReturnRow(total_count_query, None, False, True)[0]["total"]
+
 
 	response = {
-		"total_pages": math.ceil(total_count / page_size),
 		"page_number": page_number,
 		"page_size": page_size,
+		"total_count": total_count,
+		"filter_count": filter_count,
+		"total_pages": math.ceil(filter_count / page_size),
 		"result": result
 	}
 
