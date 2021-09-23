@@ -242,7 +242,7 @@ def customized_search(request):
 		for symptom in selected_symptoms:
 			conditions.append("cs.name like '%{}%'".format(symptom))
 		
-		sub_query = sub_query.format(" or ".join(conditions))
+		sub_query = sub_query.format(" and ".join(conditions))
 		# master_query_cond.append(" cs.selected = TRUE ")
 		# master_query_cond.append(" (" + " or ".join(conditions) + ")")
 		master_query.append(" EXISTS ( " + sub_query + " ) ")
@@ -252,7 +252,7 @@ def customized_search(request):
 		start_date = recorded_symptoms['start_date'] if "start_date" in recorded_symptoms and recorded_symptoms["start_date"] else ""
 		end_date = recorded_symptoms['end_date'] if "end_date" in recorded_symptoms and recorded_symptoms["end_date"] else ""
 
-		if symptoms or start_date or end_date:
+		if symptoms:
 			sub_query = '''
 							select 1 from user_account ua 
 							join stats_daily_report sdr on (sdr.user_id = ua.id)
@@ -266,7 +266,7 @@ def customized_search(request):
 				for symptom in symptoms:
 					conditions.append("cs.name like '%{}%'".format(symptom))
 				
-				sub_query += " and (" + " or ".join(conditions) + ")"
+				sub_query += " and (" + " and ".join(conditions) + ")"
 				# master_query_cond.append(" (" + " or ".join(conditions) + ")")
 
 			if start_date and end_date:
@@ -283,7 +283,7 @@ def customized_search(request):
 		for mc in medical_conditions:
 			conditions.append("ua.medical_conditions like '%{}%'".format(mc))
 		
-		sub_query = sub_query.format(" or ".join(conditions))
+		sub_query = sub_query.format(" and ".join(conditions))
 		# master_query_cond.append(" (" + " or ".join(conditions) + ")")
 	
 		master_query.append(" EXISTS ( " + sub_query + " ) ")
