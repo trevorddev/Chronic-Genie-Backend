@@ -294,7 +294,7 @@ def customized_search(request):
 	sql = (" AND ").join(master_query)
 
 	if not sql:
-		sql = "select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua"
+		sql = " EXISTS ( select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua  ) "
 		
 	
 	filtered_query = f'''
