@@ -55,7 +55,7 @@ $(function () {
 
   $("#symptomstimes").daterangepicker(
     {
-      timePicker: true,
+      timePicker: false,
       locale: {
         // format: "M/DD hh:mm A",
         format: "MM/DD/YYYY",
@@ -68,7 +68,7 @@ $(function () {
   );
   $("#dailytimes").daterangepicker(
     {
-      timePicker: true,
+      timePicker: false,
       locale: {
         // format: "M/DD hh:mm A",
         format: "MM/DD/YYYY",
