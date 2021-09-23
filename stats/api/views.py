@@ -230,19 +230,22 @@ def customized_search(request):
 	medical_conditions = filters['medical_conditions'] if "medical_conditions" in filters and filters["medical_conditions"] else []
 
 	master_query = []
+	# master_query_cond = []
+
 	if selected_symptoms:
 		sub_query = '''
-						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
+						select 1 from user_account ua 
 						join component_symptom cs on (cs.user_id = ua.id)
-						where cs.selected = TRUE and ({})
+						where ua.id = m.id and cs.selected = TRUE and ({})
 					'''
 		conditions = []
 		for symptom in selected_symptoms:
 			conditions.append("cs.name like '%{}%'".format(symptom))
 		
 		sub_query = sub_query.format(" or ".join(conditions))
-	
-		master_query.append(sub_query)
+		# master_query_cond.append(" cs.selected = TRUE ")
+		# master_query_cond.append(" (" + " or ".join(conditions) + ")")
+		master_query.append(" EXISTS ( " + sub_query + " ) ")
 
 	if recorded_symptoms:
 		symptoms = recorded_symptoms['symptoms'] if "symptoms" in recorded_symptoms and recorded_symptoms["symptoms"] else []
@@ -251,11 +254,11 @@ def customized_search(request):
 
 		if symptoms or start_date or end_date:
 			sub_query = '''
-							select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
+							select 1 from user_account ua 
 							join stats_daily_report sdr on (sdr.user_id = ua.id)
 							join stats_daily_report_symptom sdrs on (sdrs.daily_report_id_id = sdr.id)
 							join component_symptom cs on (cs.id = sdrs.symptom_id_id)
-							where 1=1
+							where ua.id = m.id and 1=1
 						'''
 			conditions = []
 
@@ -264,37 +267,42 @@ def customized_search(request):
 					conditions.append("cs.name like '%{}%'".format(symptom))
 				
 				sub_query += " and (" + " or ".join(conditions) + ")"
+				# master_query_cond.append(" (" + " or ".join(conditions) + ")")
 
 			if start_date and end_date:
 				sub_query += f" and (sdr.date BETWEEN '{start_date}' and '{end_date}')"
-			master_query.append(sub_query)
+				# master_query_cond.append(f" (sdr.date BETWEEN '{start_date}' and '{end_date}')")
+			master_query.append(" EXISTS ( " + sub_query + " ) ")
 	
 	if medical_conditions:
 		sub_query = '''
-						select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua 
-						where 1 = 1 and ({})
+						select 1 from user_account ua 
+						where ua.id = m.id and 1 = 1 and ({})
 					'''
 		conditions = []
 		for mc in medical_conditions:
 			conditions.append("ua.medical_conditions like '%{}%'".format(mc))
 		
 		sub_query = sub_query.format(" or ".join(conditions))
+		# master_query_cond.append(" (" + " or ".join(conditions) + ")")
 	
-		master_query.append(sub_query)
+		master_query.append(" EXISTS ( " + sub_query + " ) ")
 
-
-	sql = (" Union ").join(master_query)
+	# if master_query_cond:
+	# 	print("here")
+	# 	print(" and ".join(master_query_cond))
+	sql = (" AND ").join(master_query)
 
 	if not sql:
 		sql = "select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua"
 		
 	
 	filtered_query = f'''
-			SELECT * FROM
-				( 
-					{sql}
-				)
-			query
+			SELECT m.id, m.email, m.first_name, m.date_of_birth, m.gender, m.date_joined, m.last_login
+    		FROM user_account m
+			WHERE
+				{sql}
+			
 			LIMIT {page_size} offset {limit}	
 			'''
 	
@@ -302,11 +310,9 @@ def customized_search(request):
 	result = query_ReturnRow(filtered_query, None, False, True)
 
 	filter_count_query = f'''
-			SELECT count(*) as total FROM
-				( 
-					{sql}
-				)
-			query
+			SELECT count(*) as total FROM user_account m
+			WHERE
+				{sql}
 			'''
 	
 	filter_count = query_ReturnRow(filter_count_query, None, False, True)[0]["total"]
