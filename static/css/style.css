@@ -502,9 +502,6 @@ div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTable
     background: #fff;
     border: 1px solid #ddd;
 }
-.spinner-div, #showResult {
-    display: none;
-}
 #example thead tr th {
     padding: .75rem;
 }
