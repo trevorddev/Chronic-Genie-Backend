@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Medical</title>
-    <!-- {% load static %} -->
+    {% load static %}
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
       rel="stylesheet"
@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{% static "css/dataTables.bootstrap4.min.css" %}" />
     <link rel="stylesheet" href="{% static "css/responsive.dataTables.min.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "css/daterangepicker.min.css" %}" />
+    <link rel="stylesheet" href="{% static "css/chartist.min.css" %}"/>
     <link rel="stylesheet" href="{% static "css/style.css" %}"/>
   </head>
   <body>
@@ -27,7 +28,7 @@
           Django administration
         </a>
       </nav>
-      <div class="container-fluid">
+      <div class="container-fluid pb-5">
         <div class="row">
           <div class="col-md-3">
             <div class="sides mt-4">
@@ -176,6 +177,20 @@
                 </button>
               </div>
             </div>
+            <div class="chart" style="margin-top: 1.5rem">
+              <div
+                class="spinner-div text-center"
+                style="height: 200px"
+              >
+                <div class="spinner-border text-info" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <canvas
+                id="doughnutChart"
+                style="margin: 18px auto 0"
+              ></canvas>
+            </div>
           </div>
           <div class="col-md-9">
             <div class="mt-4" id="showResult">
@@ -214,6 +229,7 @@
     <script type="text/javascript" src="{% static "./js/moment.min.js" %}"></script>
     <script type="text/javascript" src="{% static "./js/daterangepicker.min.js" %}"></script>
     <script type="text/javascript" src="{% static "./js/magicsuggest.js" %}"></script>
+    <script src="{% static "./js/chart.min.js" %}"></script>    
     <script type="text/javascript" src="{% static "./js/script.js" %}"></script>
   </body>
 </html>

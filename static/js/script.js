@@ -12,6 +12,25 @@ let info = {
   },
 };
 
+var chart;
+
+// Activities
+var doughnutData = {
+  labels: ["Total Count", "Filter Count"],
+  datasets: [
+    {
+      data: [200, 300],
+      backgroundColor: ["#23c6c8", "#a3e1d4"],
+    },
+  ],
+};
+
+var doughnutOptions = {
+  responsive: false,
+};
+
+var ctx4 = document.getElementById("doughnutChart").getContext("2d");
+
 // docuement ready
 $(function () {
   tags1 = $("#tags1").magicSuggest({
@@ -67,6 +86,16 @@ $(function () {
   });
 
   $('#dailytimes, #symptomstimes').val('').attr("placeholder","Please Select Date");
+
+  // call on load
+  query = {
+    info: info,
+    medical: [],
+    ssymptoms: [],
+    rsymptoms: [],
+    daily: [],
+  };
+  ajexPost(query);
 });
 
 function formSubmit() {
@@ -75,22 +104,20 @@ function formSubmit() {
   let rsymptoms = $(".rsymptoms .ms-sel-ctn").find(".ms-sel-item").length;
   let daily = $(".daily .ms-sel-ctn").find(".ms-sel-item").length;
 
-  switch (true) {
-    case medical > 0 || ssymptoms > 0 || rsymptoms > 0 || daily > 0:
-      $("#showResult").show();
-      $(".spinner-div").css("display", "flex");
-      $("#renderTable").html("");
-      destroyDataTable();
+  $("#showResult").show();
+  $(".spinner-div").css("display", "flex");
+  $("#renderTable").html("");
+  destroyDataTable();
+  chart.destroy();
 
-      query = {
-        info: info,
-        medical: medical,
-        ssymptoms: ssymptoms,
-        rsymptoms: rsymptoms,
-        daily: daily,
-      };
-      ajexPost(query);
-  }
+  query = {
+    info: info,
+    medical: medical,
+    ssymptoms: ssymptoms,
+    rsymptoms: rsymptoms,
+    daily: daily,
+  };
+  ajexPost(query);
 }
 
 function ajexPost(body) {
@@ -130,6 +157,8 @@ function ajexPost(body) {
                     <th>Name & Email</th>
                     <th>DOB</th>
                     <th>Gender</th>
+                    <th>Date of Join</th>
+                    <th>Last Login</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -138,33 +167,33 @@ function ajexPost(body) {
         data.map((data) => {
           html += `<tr>`;
           html += `<td>
-                                <a href="#">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-blue mr-3">EB</div>
-                                        <div>
-                                            <p class="font-weight-bold mb-0">${toTitleCase(
-                                              data.first_name
-                                            )}</p>
-                                            <p class="text-muted mb-0">${
-                                              data.email
-                                            }</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </td>`;
+                      <a href="#">
+                          <div class="d-flex align-items-center">
+                              <div class="avatar avatar-blue mr-3">EB</div>
+                              <div>
+                                  <p class="font-weight-bold mb-0">${toTitleCase(
+                                    data.first_name
+                                  )}</p>
+                                  <p class="text-muted mb-0">${data.email}</p>
+                              </div>
+                          </div>
+                      </a>
+                  </td>`;
           html += `<td>${data.date_of_birth}</td>`;
           html += `<td>${toTitleCase(data.gender)}</td>`;
+          html += `<td>${data.date_joined.split("T")[0]}</td>`;
+          html += `<td>${data.last_login.split("T")[0]}</td>`;
           html += `<td>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-icon" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="far fa-ellipsis-h" data-toggle="tooltip" data-placement="top" title="Actions"></i>
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                    <a class="dropdown-item" href="#"><i class="bx bxs-pencil mr-2"></i> Edit Profile</a>
-                                    <a class="dropdown-item text-danger" href="#"><i class="bx bxs-trash mr-2"></i> Remove</a>
-                                </div>
-                            </div>
-                        </td>`;
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-icon" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="far fa-ellipsis-h" data-toggle="tooltip" data-placement="top" title="Actions"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                            <a class="dropdown-item" href="#"><i class="bx bxs-pencil mr-2"></i> Edit Profile</a>
+                            <a class="dropdown-item text-danger" href="#"><i class="bx bxs-trash mr-2"></i> Remove</a>
+                        </div>
+                    </div>
+                </td>`;
           html += `</tr>`;
         });
       }
@@ -172,6 +201,24 @@ function ajexPost(body) {
       html += `</tbody></table>`;
       $(".spinner-div").hide();
       $("#renderTable").html(html);
+      var total = response.total_count;
+      var filter = response.filter_count;
+      if (total === filter ) {
+        doughnutData.datasets = [
+          {
+            data: [total, 0],
+            backgroundColor: ["#23c6c8", "#a3e1d4"],
+          },
+        ];
+      } else {
+        doughnutData.datasets = [
+          {
+            data: [total, filter],
+            backgroundColor: ["#23c6c8", "#a3e1d4"],
+          },
+        ];
+      }
+      pieChart(ctx4, doughnutData, doughnutOptions);
       dataTableFunc();
       setTimeout(() => {
         toolTip();
@@ -180,11 +227,19 @@ function ajexPost(body) {
   });
 }
 
+function pieChart(chartId, doughnutData, doughnutOptions) {
+  chart = new Chart(chartId, {
+    type: "doughnut",
+    data: doughnutData,
+    options: doughnutOptions,
+  });
+}
+
 function dataTableFunc() {
   $("#example").DataTable({
     aaSorting: [],
     responsive: true,
-    pageLength: 5,
+    pageLength: 25,
     lengthMenu: [5, 25, 50, 75, 100],
     columnDefs: [
       {
@@ -196,6 +251,9 @@ function dataTableFunc() {
         targets: -1,
       },
     ],
+    language: {
+      searchPlaceholder: "Search records",
+    },
   });
 }
 
@@ -204,9 +262,15 @@ function destroyDataTable() {
 }
 
 function toTitleCase(str) {
-  return str.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
+  if (str) {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+  }
 }
 
 function toolTip() {
