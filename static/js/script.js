@@ -159,7 +159,6 @@ function ajexPost(body) {
                     <th>Gender</th>
                     <th>Date of Join</th>
                     <th>Last Login</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -169,7 +168,9 @@ function ajexPost(body) {
           html += `<td>
                       <a href="#">
                           <div class="d-flex align-items-center">
-                              <div class="avatar avatar-blue mr-3">EB</div>
+                              <div class="avatar avatar-blue mr-3">${toTitleCase(
+                                data.first_name[0]
+                              )}</div>
                               <div>
                                   <p class="font-weight-bold mb-0">${toTitleCase(
                                     data.first_name
@@ -183,17 +184,6 @@ function ajexPost(body) {
           html += `<td>${toTitleCase(data.gender)}</td>`;
           html += `<td>${data.date_joined.split("T")[0]}</td>`;
           html += `<td>${data.last_login.split("T")[0]}</td>`;
-          html += `<td>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-icon" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="far fa-ellipsis-h" data-toggle="tooltip" data-placement="top" title="Actions"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <a class="dropdown-item" href="#"><i class="bx bxs-pencil mr-2"></i> Edit Profile</a>
-                            <a class="dropdown-item text-danger" href="#"><i class="bx bxs-trash mr-2"></i> Remove</a>
-                        </div>
-                    </div>
-                </td>`;
           html += `</tr>`;
         });
       }
