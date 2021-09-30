@@ -364,12 +364,11 @@ def users_summary(request):
 	print(one_month_before_date)
 	
 
-	# timedelta(days=30)
-	# datetime.timedelta(days=365)
 	query = f'''
-			SELECT DATE(date_joined) as date,DAYNAME(date_joined) as day_name, count(*) as count from user_account ua 
+			SELECT DATE(date_joined) as date, DAYNAME(date_joined) as day_name, count(*) as count from user_account ua 
 			where (DATE(date_joined) > "{one_week_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY date_joined
+			order by date
 	'''
 	weekly_result = query_ReturnRow(query, None, False, True)
 
@@ -377,8 +376,9 @@ def users_summary(request):
 
 	query = f'''
 			SELECT DATE(date_joined) as date, count(*) as count from user_account ua 
-			where (DATE(date_joined) >= "{one_month_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
+			where (DATE(date_joined) > "{one_month_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY date_joined
+			order by date
 	'''
 	monthly_result = query_ReturnRow(query, None, False, True)
 
@@ -386,32 +386,55 @@ def users_summary(request):
 			SELECT MONTHNAME(date_joined) as date, count(*) as count from user_account ua  
 			where (DATE(date_joined) >= "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY MONTHNAME(date_joined)
+			order by date
 	'''
 	yearly_result = query_ReturnRow(query, None, False, True)
 
 
-
+	# add date which is not returned by query, setting count to 0 for that date
 	modified_weekly_result = []
 	base = date.today()
 	date_list = [base -timedelta(days=x) for x in range(7)]
-	for _date in date_list:
+	for _date in date_list[::-1]:
+		record_found = False
 		for i in weekly_result:
 			if _date == i['date']:
-				print("yes")
 				modified_weekly_result.append(i)
-			else:
-				modified_weekly_result.append(
-					{
-						"date": _date,
-						"day_name": date.fromisoformat(_date.strftime("%Y-%m-%d")).strftime('%A'),
-						"count": 0
-					}
-				)
+				record_found = True
+				break
+		if not record_found:
+			modified_weekly_result.append(
+				{
+					"date": _date,
+					"day_name": date.fromisoformat(_date.strftime("%Y-%m-%d")).strftime('%A'),
+					"count": 0
+				}
+			)
+
+
+	# add date which is not returned by query, setting count to 0 for that date
+	modified_monthly_result = []
+	base = date.today()
+	date_list = [base -timedelta(days=x) for x in range(30)]
+	for _date in date_list[::-1]:
+		record_found = False
+		for i in monthly_result:
+			if _date == i['date']:
+				modified_monthly_result.append(i)
+				record_found = True
+				break
+		if not record_found:
+			modified_monthly_result.append(
+				{
+					"date": _date,
+					"count": 0
+				}
+			)
 
 	response = {
 		"Total": {},
 		"Weekly": modified_weekly_result,
-		"Monthly": monthly_result,
+		"Monthly": modified_monthly_result,
 		"Yearly": yearly_result,
 	}
 
