@@ -351,7 +351,8 @@ def user_dashboard(request):
 @permission_classes(())
 def users_summary(request):
 
-	from datetime import datetime, timedelta
+	import datetime
+	from datetime import datetime, timedelta, date
 	ini_date_for_now = datetime.now().date()
 
 	one_week_before_date = (ini_date_for_now + timedelta(days = -7)).strftime("%Y-%m-%d")
@@ -367,10 +368,12 @@ def users_summary(request):
 	# datetime.timedelta(days=365)
 	query = f'''
 			SELECT DATE(date_joined) as date,DAYNAME(date_joined) as day_name, count(*) as count from user_account ua 
-			where (DATE(date_joined) >= "{one_week_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
+			where (DATE(date_joined) > "{one_week_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY date_joined
 	'''
 	weekly_result = query_ReturnRow(query, None, False, True)
+
+	
 
 	query = f'''
 			SELECT DATE(date_joined) as date, count(*) as count from user_account ua 
@@ -387,16 +390,27 @@ def users_summary(request):
 	yearly_result = query_ReturnRow(query, None, False, True)
 
 
-	# day_order = weekdays(ini_date_for_now.strftime('%A'))
-	# print(day_order)
-	# for day in day_order:
-	# 	for i in result:
-	# 		if day == i['date']:
 
+	modified_weekly_result = []
+	base = date.today()
+	date_list = [base -timedelta(days=x) for x in range(7)]
+	for _date in date_list:
+		for i in weekly_result:
+			if _date == i['date']:
+				print("yes")
+				modified_weekly_result.append(i)
+			else:
+				modified_weekly_result.append(
+					{
+						"date": _date,
+						"day_name": date.fromisoformat(_date.strftime("%Y-%m-%d")).strftime('%A'),
+						"count": 0
+					}
+				)
 
 	response = {
 		"Total": {},
-		"Weekly": weekly_result,
+		"Weekly": modified_weekly_result,
 		"Monthly": monthly_result,
 		"Yearly": yearly_result,
 	}
@@ -413,10 +427,3 @@ def users_summary(request):
 
 	return Response(data=response, status=status.HTTP_200_OK)
 
-
-def weekdays(day):
-    days = ['Sunday', 'Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday']
-    i=days.index(day) # get the index of the selected day
-    d1=days[i:] #get the list from an including this index
-    d1.extend(days[:i]) # append the list form the beginning to this index
-    return d1
