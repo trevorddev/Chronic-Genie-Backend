@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 
 from rest_framework import status
-import json, math
+import json, math, time
 
 from sql_utils import query_ReturnRow
 from stats.models import (
@@ -17,6 +17,9 @@ from stats.models import (
 	daily_report_flare_medication
 )
 
+def month_converter(month):
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    return months[month-1]
 
 @api_view(['POST'])
 @permission_classes((IsAuthenticated,))
@@ -359,9 +362,6 @@ def users_summary(request):
 	one_month_before_date = (ini_date_for_now + timedelta(days = -30)).strftime("%Y-%m-%d")
 	one_year_before_date = (ini_date_for_now + timedelta(days = -365)).strftime("%Y-%m-%d")
 	five_year_before_date = (ini_date_for_now + timedelta(days = -1825)).strftime("%Y-%m-%d")  
-	print(ini_date_for_now)
-	print(one_week_before_date)
-	print(one_month_before_date)
 	
 
 	query = f'''
@@ -383,10 +383,10 @@ def users_summary(request):
 	monthly_result = query_ReturnRow(query, None, False, True)
 
 	query = f'''
-			SELECT MONTHNAME(date_joined) as date, count(*) as count from user_account ua  
-			where (DATE(date_joined) >= "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
-			GROUP BY MONTHNAME(date_joined)
-			order by date
+			SELECT YEAR(date_joined) as y, MONTH(date_joined) as m, count(*) as count from user_account ua  
+			where (DATE(date_joined) > "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
+			GROUP BY Year(date_joined), MONTH(date_joined)
+			order by y, m
 	'''
 	yearly_result = query_ReturnRow(query, None, False, True)
 
@@ -430,12 +430,34 @@ def users_summary(request):
 					"count": 0
 				}
 			)
-
+	
+	# get list of last 12 year, month
+	now = time.localtime()
+	last_12_months = [time.localtime(time.mktime((now.tm_year, now.tm_mon - n, 1, 0, 0, 0, 0, 0, 0)))[:2] for n in range(12)]
+	# add date which is not returned by query, setting count to 0 for that date
+	modified_yearly_result = []
+	for y, m in last_12_months:
+		record_found = False
+		for i in yearly_result:
+			if y == i['y'] and m == i['m']:
+				modified_yearly_result.append({
+						'date': month_converter(m) + ' ' + str(y),
+						'count': i['count']
+					}
+				)
+				record_found = True
+				break
+		if not record_found:
+			modified_yearly_result.append({
+						'date': month_converter(m) + ' ' + str(y),
+						'count': 0
+					}
+			)
 	response = {
 		"Total": {},
 		"Weekly": modified_weekly_result,
 		"Monthly": modified_monthly_result,
-		"Yearly": yearly_result,
+		"Yearly": modified_yearly_result,
 	}
 
 
