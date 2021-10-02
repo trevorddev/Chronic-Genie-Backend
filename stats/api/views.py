@@ -322,7 +322,7 @@ def customized_search(request):
 
 	if is_export:
 		pass
-		response = HttpResponse(content_type='text/csv')
+		response = HttpResponse(content_type='application/force-downloa')
 		response['Content-Disposition'] = 'attachment; filename=user_dashboard.csv'
 		writer = csv.writer(response)
 
