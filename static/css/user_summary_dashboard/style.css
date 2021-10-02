@@ -1,0 +1,54 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    /* background-color: #f1f2f4; */
+    background: #f7f7f7;
+}
+
+.cs-select-btn > .btn {
+    width: 100px;
+}
+.cs-select-btn > .btn.active {
+    pointer-events: none;
+}
+.time {
+    position: relative;
+}
+.spinner-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+}
+#selectButton > .btn.active,
+#selectButton > .btn:hover,
+#selectButton > .btn:hover:focus,
+#selectButton > .btn:focus {
+    background: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+#selectButton > .btn,
+#selectButton > .btn:hover,
+#selectButton > .btn:hover:focus,
+#selectButton > .btn:focus {
+    padding: 6px;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 767px) {
+    #selectButton > .btn,
+    #selectButton > .btn:hover,
+    #selectButton > .btn:hover:focus,
+    #selectButton > .btn:focus {
+        padding: 4px;
+        font-size: 14px;
+        width: 60px;
+    }
+    .graph--ts h2 {
+        font-size: 1.6rem;
+    }
+    .spinner-div {
+        height: 100px;
+    }
+}

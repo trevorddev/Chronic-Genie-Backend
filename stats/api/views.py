@@ -348,7 +348,7 @@ def customized_search(request):
 def user_dashboard(request):
 	
 	if request.method == 'GET':
-		return render(request, 'user_dashboard.html', {})
+		return render(request, 'user_summary_dashboard.html', {})
 	
 
 
@@ -454,7 +454,7 @@ def users_summary(request):
 	last_12_months = [time.localtime(time.mktime((now.tm_year, now.tm_mon - n, 1, 0, 0, 0, 0, 0, 0)))[:2] for n in range(12)]
 	# add date which is not returned by query, setting count to 0 for that date
 	modified_yearly_result = []
-	for y, m in last_12_months:
+	for y, m in last_12_months[::-1]:
 		record_found = False
 		for i in yearly_result:
 			if y == i['y'] and m == i['m']:
@@ -478,7 +478,7 @@ def users_summary(request):
 	last_5_years = [time.localtime(time.mktime((now.tm_year - n, 1, 1, 0, 0, 0, 0, 0, 0)))[:1] for n in range(5)]
 	# add date which is not returned by query, setting count to 0 for that date
 	modified_five_year_result = []
-	for y, in last_5_years:
+	for y, in last_5_years[::-1]:
 		record_found = False
 		for i in five_year_result:
 			if y == i['y']:
