@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
+import datetime
+from datetime import datetime, timedelta, date
 
 from rest_framework import status
 import json, math, time
@@ -354,8 +356,6 @@ def user_dashboard(request):
 @permission_classes(())
 def users_summary(request):
 
-	import datetime
-	from datetime import datetime, timedelta, date
 	ini_date_for_now = datetime.now().date()
 
 	one_week_before_date = (ini_date_for_now + timedelta(days = -7)).strftime("%Y-%m-%d")
@@ -363,7 +363,14 @@ def users_summary(request):
 	one_year_before_date = (ini_date_for_now + timedelta(days = -365)).strftime("%Y-%m-%d")
 	five_year_before_date = (ini_date_for_now + timedelta(days = -1825)).strftime("%Y-%m-%d")  
 	
+	## getting total count
+	query = f'''
+			SELECT count(*) as count from user_account ua 
+	'''
 
+	total_count = query_ReturnRow(query, None, False, True)[0]["count"]
+
+	## getting count of users in last 7 days
 	query = f'''
 			SELECT DATE(date_joined) as date, DAYNAME(date_joined) as day_name, count(*) as count from user_account ua 
 			where (DATE(date_joined) > "{one_week_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
@@ -373,7 +380,7 @@ def users_summary(request):
 	weekly_result = query_ReturnRow(query, None, False, True)
 
 	
-
+	## getting count of users in last 30 days
 	query = f'''
 			SELECT DATE(date_joined) as date, count(*) as count from user_account ua 
 			where (DATE(date_joined) > "{one_month_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
@@ -382,6 +389,7 @@ def users_summary(request):
 	'''
 	monthly_result = query_ReturnRow(query, None, False, True)
 
+	## getting count of users in last 12 months
 	query = f'''
 			SELECT YEAR(date_joined) as y, MONTH(date_joined) as m, count(*) as count from user_account ua  
 			where (DATE(date_joined) > "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
@@ -389,6 +397,16 @@ def users_summary(request):
 			order by y, m
 	'''
 	yearly_result = query_ReturnRow(query, None, False, True)
+
+
+	## getting count of users in last 5 years
+	query = f'''
+			SELECT YEAR(date_joined) as y, count(*) as count from user_account ua  
+			where (DATE(date_joined) > "{five_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
+			GROUP BY Year(date_joined)
+			order by y
+	'''
+	five_year_result = query_ReturnRow(query, None, False, True)
 
 
 	# add date which is not returned by query, setting count to 0 for that date
@@ -431,7 +449,7 @@ def users_summary(request):
 				}
 			)
 	
-	# get list of last 12 year, month
+	# get list of last 12 months
 	now = time.localtime()
 	last_12_months = [time.localtime(time.mktime((now.tm_year, now.tm_mon - n, 1, 0, 0, 0, 0, 0, 0)))[:2] for n in range(12)]
 	# add date which is not returned by query, setting count to 0 for that date
@@ -453,22 +471,38 @@ def users_summary(request):
 						'count': 0
 					}
 			)
+
+
+	# get list of last 5 years
+	now = time.localtime()
+	last_5_years = [time.localtime(time.mktime((now.tm_year - n, 1, 1, 0, 0, 0, 0, 0, 0)))[:1] for n in range(5)]
+	# add date which is not returned by query, setting count to 0 for that date
+	modified_five_year_result = []
+	for y, in last_5_years:
+		record_found = False
+		for i in five_year_result:
+			if y == i['y']:
+				modified_five_year_result.append({
+						'date': str(y),
+						'count': i['count']
+					}
+				)
+				record_found = True
+				break
+		if not record_found:
+			modified_five_year_result.append({
+						'date': str(y),
+						'count': 0
+					}
+			)
 	response = {
-		"Total": {},
+		"Total": total_count,
 		"Weekly": modified_weekly_result,
 		"Monthly": modified_monthly_result,
 		"Yearly": modified_yearly_result,
+		"all": modified_five_year_result
 	}
 
-
-	# response = {
-	# 	"page_number": page_number,
-	# 	"page_size": page_size,
-	# 	"total_count": total_count,
-	# 	"filter_count": filter_count,
-	# 	"total_pages": math.ceil(filter_count / page_size),
-	# 	"result": result
-	# }
 
 	return Response(data=response, status=status.HTTP_200_OK)
 
