@@ -7,7 +7,7 @@ import datetime
 from datetime import datetime, timedelta, date
 
 from rest_framework import status
-import json, math, time
+import json, math, time, csv
 
 from sql_utils import query_ReturnRow
 from stats.models import (
@@ -224,6 +224,8 @@ def customized_search(request):
 	page_number = request_body["page_number"] if "page_number" in request_body and request_body["page_number"] else 1 
 	page_size = request_body["page_size"] if "page_size" in request_body and request_body["page_size"] else 1 
 	
+	is_export = request_body["is_export"] if "is_export" in request_body else False
+
 	if not filters:
 		return Response(data={"Response": {}}, status = status.HTTP_200_OK)
    
@@ -301,18 +303,34 @@ def customized_search(request):
 	if not sql:
 		sql = " EXISTS ( select ua.id, ua.email, ua.first_name, ua.date_of_birth, ua.gender, ua.date_joined, ua.last_login from user_account ua  ) "
 		
+	if is_export:
+		pass
 	
 	filtered_query = f'''
 			SELECT m.id, m.email, m.first_name, m.date_of_birth, m.gender, m.date_joined, m.last_login
     		FROM user_account m
 			WHERE
 				{sql}
-			
-			LIMIT {page_size} offset {limit}	
+				
 			'''
 	
+	if not is_export:
+		filtered_query += f'LIMIT {page_size} offset {limit}'
+
 	print(filtered_query)
 	result = query_ReturnRow(filtered_query, None, False, True)
+
+	if is_export:
+		pass
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename=user_dashboard.csv'
+		writer = csv.writer(response)
+
+		
+		writer.writerow(["Email", "First Name", "D.O.B", "Gender", "Date Joined"])
+		for s in result:
+			writer.writerow([s['email'], s['first_name'], s['date_of_birth'], s['gender'], s['date_joined'], s['last_login']])
+		return response
 
 	filter_count_query = f'''
 			SELECT count(*) as total FROM user_account m
