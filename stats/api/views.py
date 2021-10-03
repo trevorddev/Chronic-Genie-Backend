@@ -235,7 +235,8 @@ def customized_search(request):
 	selected_symptoms = filters['selected_symptoms'] if "selected_symptoms" in filters and filters["selected_symptoms"] else []
 	recorded_symptoms = filters['recorded_symptoms'] if "recorded_symptoms" in filters and filters["recorded_symptoms"] else {}
 	medical_conditions = filters['medical_conditions'] if "medical_conditions" in filters and filters["medical_conditions"] else []
-
+	daily_medication = filters['daily_medications'] if "daily_medications" in filters and filters["daily_medications"] else {}
+	
 	master_query = []
 	# master_query_cond = []
 
@@ -279,6 +280,33 @@ def customized_search(request):
 			if start_date and end_date:
 				sub_query += f" and (sdr.date BETWEEN '{start_date}' and '{end_date}')"
 				# master_query_cond.append(f" (sdr.date BETWEEN '{start_date}' and '{end_date}')")
+			master_query.append(" EXISTS ( " + sub_query + " ) ")
+
+	if daily_medication:
+		medicines = daily_medication['medicines'] if "medicines" in daily_medication and daily_medication["medicines"] else []
+		start_date = daily_medication['start_date'] if "start_date" in daily_medication and daily_medication["start_date"] else ""
+		end_date = daily_medication['end_date'] if "end_date" in daily_medication and daily_medication["end_date"] else ""
+
+		if medicines:
+			sub_query = '''
+							select 1 from user_account ua 
+							join component_dailymedication cd on (cd.user_id = ua.id)
+							where ua.id = m.id and cd.selected = TRUE and 1=1
+						'''
+			conditions = []
+
+			
+			for medicine in medicines:
+				conditions.append("cd.name like '%{}%'".format(medicine))
+			
+			sub_query += " and (" + " and ".join(conditions) + ")"
+
+			if start_date:
+				sub_query += f" and (cd.startDate = '{start_date}')"
+			
+			if end_date:
+				sub_query += f" and (cd.endDate = '{end_date}')"
+
 			master_query.append(" EXISTS ( " + sub_query + " ) ")
 	
 	if medical_conditions:
