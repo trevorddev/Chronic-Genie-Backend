@@ -119,6 +119,7 @@ $("#selectButton > .btn").on("click", function () {
     case "all":
       filterData(dataStores.all, 'all').then((result) => {
         barData.labels = result.label;
+        barData.datasets[0].label = "All";
         barData.datasets[0].data = result.data;
         barChart(ctx2, barData, barOptions);
         $(".spinner-div").hide();
