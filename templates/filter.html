@@ -186,15 +186,17 @@
                   <span class="sr-only">Loading...</span>
                 </div>
               </div>
-              <canvas
-                id="doughnutChart"
-                style="margin: 18px auto 0"
-              ></canvas>
+              <canvas id="doughnutChart" width="300" height="300"></canvas>
             </div>
           </div>
           <div class="col-md-9">
             <div class="mt-4" id="showResult">
-              <h5 class="font-weight-medium mb-4">Results</h5>
+              <div class="d-flex justify-content-between mb-4">
+                <h5 class="font-weight-medium mb-0">Results</h5>
+                <button class="btn btn-info btn-sm float-right" onclick="exports()">
+                  Export
+                </button>
+              </div>
               <div class="spinner-div text-center">
                 <div
                   class="spinner-border text-info"
@@ -230,6 +232,7 @@
     <script type="text/javascript" src="{% static "./js/daterangepicker.min.js" %}"></script>
     <script type="text/javascript" src="{% static "./js/magicsuggest.js" %}"></script>
     <script src="{% static "./js/chart.min.js" %}"></script>    
+    <script src="{% static "./js/chartjs-plugin-datalabels.min.js" %}"></script>
     <script type="text/javascript" src="{% static "./js/customized_search/script.js" %}"></script>
   </body>
 </html>

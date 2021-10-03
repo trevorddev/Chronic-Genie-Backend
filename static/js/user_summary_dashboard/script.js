@@ -69,6 +69,7 @@ function ajexPost() {
   $.ajax(settings).done(function (response) {
     if (response) {
       dataStores = response;
+      $("#total").text(dataStores.Total)
       filterData(dataStores.Weekly, "week").then((result) => {
         barData.labels = result.label;
         barData.datasets[0].label = "Weekly";

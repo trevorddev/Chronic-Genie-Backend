@@ -327,7 +327,7 @@ def customized_search(request):
 		writer = csv.writer(response)
 
 		
-		writer.writerow(["Email", "First Name", "D.O.B", "Gender", "Date Joined"])
+		writer.writerow(["Email", "First Name", "D.O.B", "Gender", "Date Joined", "Last Login"])
 		for s in result:
 			writer.writerow([s['email'], s['first_name'], s['date_of_birth'], s['gender'], s['date_joined'], s['last_login']])
 		return response
@@ -351,7 +351,7 @@ def customized_search(request):
 	response = {
 		"page_number": page_number,
 		"page_size": page_size,
-		"total_count": total_count,
+		"total_count": total_count - filter_count,
 		"filter_count": filter_count,
 		"total_pages": math.ceil(filter_count / page_size),
 		"result": result

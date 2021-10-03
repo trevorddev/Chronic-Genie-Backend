@@ -26,10 +26,33 @@ var doughnutData = {
 };
 
 var doughnutOptions = {
-  responsive: false,
+  responsive: true,
+  maintainAspectRatio: false,
+  tooltips: {
+    enabled: false,
+  },
+  plugins: {
+    datalabels: {
+      formatter: (value, ctx) => {
+        console.log(value)
+        let datasets = ctx.chart.data.datasets;
+        if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+          let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+          console.log(sum)
+          let percentage = Math.round((value / sum) * 100) + "%";
+          return percentage;
+        } else {
+          return percentage;
+        }
+      },
+      color: "#fff",
+    },
+  },
 };
 
 var ctx4 = document.getElementById("doughnutChart").getContext("2d");
+ctx4.width = 1000;
+ctx4.height = 1000;
 
 // docuement ready
 $(function () {
@@ -131,6 +154,7 @@ function ajexPost(body) {
     data: JSON.stringify({
       page_number: 1,
       page_size: 10,
+      is_export: false,
       filters: {
         medical_conditions: tags1.getValue(),
         selected_symptoms: tags2.getValue(),
@@ -219,7 +243,7 @@ function ajexPost(body) {
 
 function pieChart(chartId, doughnutData, doughnutOptions) {
   chart = new Chart(chartId, {
-    type: "doughnut",
+    type: "pie",
     data: doughnutData,
     options: doughnutOptions,
   });
@@ -228,6 +252,7 @@ function pieChart(chartId, doughnutData, doughnutOptions) {
 function dataTableFunc() {
   $("#example").DataTable({
     aaSorting: [],
+    dom: "Bfrtip",
     responsive: true,
     pageLength: 25,
     lengthMenu: [5, 25, 50, 75, 100],
@@ -265,4 +290,50 @@ function toTitleCase(str) {
 
 function toolTip() {
   $('[data-toggle="tooltip"]').tooltip();
+}
+
+function exports() {
+  query = {
+    info: info,
+    medical: [],
+    ssymptoms: [],
+    rsymptoms: [],
+    daily: [],
+  };
+  var settings = {
+    url: "http://54.153.85.99/api/stats/customized_search",
+    method: "POST",
+    timeout: 0,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      page_number: 1,
+      page_size: 10,
+      is_export: true,
+      filters: {
+        medical_conditions: tags1.getValue(),
+        selected_symptoms: tags2.getValue(),
+        recorded_symptoms: {
+          start_date: info.symptoms.start,
+          end_date: info.symptoms.end,
+          symptoms: tags3.getValue(),
+        },
+        daily_medications: {
+          start_date: info.daily.start,
+          end_date: info.daily.end,
+          medicines: tags4.getValue(),
+        },
+      },
+    }),
+  };
+
+  $.ajax(settings).done(function (response) {
+    console.log(response);
+    var blog = new Blob([response]);
+    var link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blog);
+    link.download = "exports.csv";
+    link.click();
+  });
 }
