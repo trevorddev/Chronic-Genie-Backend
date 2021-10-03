@@ -52,3 +52,12 @@ body {
         height: 100px;
     }
 }
+
+
+nav.navbar.navbar-light.bg-theme {
+    background-color: #417690 !important;
+}
+
+.navbar-light .navbar-brand {
+    color: #f5dd5d;
+}
