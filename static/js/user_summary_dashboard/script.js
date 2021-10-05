@@ -136,7 +136,8 @@ function filterData(data, checkLevel) {
       dataSet.push(value.count);
       switch (checkLevel) {
         case "week":
-          labelSet.push(daysName[new Date(value.date).getDay()]);
+          tempDate = new Date(value.date)
+          labelSet.push(tempDate.getDate() + ' ' + monthsName[tempDate.getMonth()]);
           break;
         case "month":
           tempDate = new Date(value.date)
@@ -144,7 +145,7 @@ function filterData(data, checkLevel) {
           break;
         case "year":
           tempDate = new Date(value.date)
-          labelSet.push(monthsName[tempDate.getMonth()] + '' + tempDate.getFullYear());
+          labelSet.push(monthsName[tempDate.getMonth()] + ' ' + tempDate.getFullYear());
           break;
         case "all":
           labelSet.push(value.date);

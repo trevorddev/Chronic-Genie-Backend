@@ -418,7 +418,7 @@ def users_summary(request):
 
 	## getting count of users in last 7 days
 	query = f'''
-			SELECT DATE(date_joined) as date, DAYNAME(date_joined) as day_name, count(*) as count from user_account ua 
+			SELECT DATE(date_joined) as date, count(*) as count from user_account ua 
 			where (DATE(date_joined) > "{one_week_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY date_joined
 			order by date
@@ -437,7 +437,7 @@ def users_summary(request):
 
 	## getting count of users in last 12 months
 	query = f'''
-			SELECT YEAR(date_joined) as y, MONTH(date_joined) as m, count(*) as count from user_account ua  
+			SELECT YEAR(date_joined) as y, count(*) as count from user_account ua  
 			where (DATE(date_joined) > "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY Year(date_joined), MONTH(date_joined)
 			order by y, m
@@ -470,7 +470,6 @@ def users_summary(request):
 			modified_weekly_result.append(
 				{
 					"date": _date,
-					"day_name": date.fromisoformat(_date.strftime("%Y-%m-%d")).strftime('%A'),
 					"count": 0
 				}
 			)
