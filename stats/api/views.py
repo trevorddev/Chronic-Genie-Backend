@@ -437,7 +437,7 @@ def users_summary(request):
 
 	## getting count of users in last 12 months
 	query = f'''
-			SELECT YEAR(date_joined) as y, count(*) as count from user_account ua  
+			SELECT YEAR(date_joined) as y, MONTH(date_joined) as m, count(*) as count from user_account ua  
 			where (DATE(date_joined) > "{one_year_before_date}" and DATE(date_joined) <= "{ini_date_for_now}")
 			GROUP BY Year(date_joined), MONTH(date_joined)
 			order by y, m
