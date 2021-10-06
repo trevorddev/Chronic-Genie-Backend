@@ -61,3 +61,12 @@ nav.navbar.navbar-light.bg-theme {
 .navbar-light .navbar-brand {
     color: #f5dd5d;
 }
+
+
+#user-summary-filters {
+    text-align: right;
+}
+
+#total{
+    font-size: 15px;
+}
