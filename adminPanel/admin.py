@@ -56,3 +56,6 @@ admin.site.register(Comorbidity)
 admin.site.register(DailyMedication)
 admin.site.register(FlareMedication)
 admin.site.register(MarketingEmail, MarketingEmailAdmin)
+
+# hiding site administration text from home page
+admin.site.index_title = ''
