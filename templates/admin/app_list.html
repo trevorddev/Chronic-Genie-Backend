@@ -3,53 +3,58 @@
 <div class="app-adminPanel module">
     <table>
         <caption>
-            Reporitng
+            Chronic Genie
         </caption>
         <tr class="model-aggravator">
-          <th scope="row"><a href="/api/stats/user_dashboard">Dashboard</a></th>
+          <th scope="row"><a href="/admin">Dashboard</a></th>
           <td></td>
       </tr>
+        <tr class="model-aggravator">
+            <th scope="row"><a href="/admin/user/account">Users</a></th>
+            <td></td>
+        </tr>        
         <tr class="model-aggravator">
             <th scope="row"><a href="/api/stats/customized_search">Analytics</a></th>
             <td></td>
         </tr>
 </table>
 </div>
-{% if app_list %}
-  {% for app in app_list %}
-    <div class="app-{{ app.app_label }} module{% if app.app_url in request.path %} current-app{% endif %}">
-      <table>
-        <caption>
-          <a href="{{ app.app_url }}" class="section" title="{% blocktranslate with name=app.name %}Models in the {{ name }} application{% endblocktranslate %}">{{ app.name }}</a>
-        </caption>
-        {% for model in app.models %}
-          <tr class="model-{{ model.object_name|lower }}{% if model.admin_url in request.path %} current-model{% endif %}">
-            {% if model.admin_url %}
-              <th scope="row"><a href="{{ model.admin_url }}"{% if model.admin_url in request.path %} aria-current="page"{% endif %}>{{ model.name }}</a></th>
-            {% else %}
-              <th scope="row">{{ model.name }}</th>
-            {% endif %}
-
-            {% if model.add_url %}
-              <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
-            {% else %}
-              <td></td>
-            {% endif %}
-
-            {% if model.admin_url and show_changelinks %}
-              {% if model.view_only %}
-                <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
-              {% else %}
-                <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
-              {% endif %}
-            {% elif show_changelinks %}
-              <td></td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% endfor %}
-{% else %}
-  <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
-{% endif %}
+<div class="app-adminPanel module">
+  <table>
+      <caption>
+          APP SETTINGS
+      </caption>
+      <tr class="model-aggravator">
+        <th scope="row"><a href="/admin/adminPanel/appsettings">App Settings</a></th>
+        <td></td>
+    </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/marketingemail">Marketing Emails</a></th>
+          <td></td>
+      </tr>        
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/symptom">Symptoms</a></th>
+          <td></td>
+      </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/aggravator">Aggravators</a></th>
+          <td></td>
+      </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/comorbidity">Comorbidities</a></th>
+          <td></td>
+      </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/food">Foods</a></th>
+          <td></td>
+      </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/flaremedication">Flare medications</a></th>
+          <td></td>
+      </tr>
+      <tr class="model-aggravator">
+          <th scope="row"><a href="/admin/adminPanel/dailymedication">Daily medications</a></th>
+          <td></td>
+      </tr>
+</table>
+</div>
