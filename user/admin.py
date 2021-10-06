@@ -38,5 +38,8 @@ class AccountAdmin(UserAdmin):
 
 	actions = [export_as_csv]
 
+	def has_add_permission(self, request, obj=None):
+		return False
+
 admin.site.unregister(Group)
 admin.site.register(Account, AccountAdmin)
