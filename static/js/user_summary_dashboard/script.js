@@ -46,6 +46,20 @@ var barOptions = {
       display: false,
     },
   },
+  scales: {
+    yAxes: [{
+      ticks: {
+        min: 0, // it is for ignoring negative step.
+        beginAtZero: true,
+        callback: function(value, index, values) {
+            if (Math.floor(value) === value) {
+                return value;
+            }
+        }
+    }
+      }
+    ]
+  }
 };
 var dataStores;
 
