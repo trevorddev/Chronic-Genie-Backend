@@ -64,7 +64,7 @@ def getAppSettings(request):
 	return Response(data=response, status = status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 @permission_classes((IsAuthenticated, ))
 def ListCreateView(request, component):
 	
@@ -75,6 +75,14 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return food_crud.get_all(request)
 
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                food_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK) 
 
     if component == "aggravator":
         if request.method == 'POST':
@@ -83,6 +91,14 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return aggravator_crud.get_all(request)
 
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                aggravator_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK) 
     
     if component == "symptom":
         if request.method == 'POST':
@@ -91,6 +107,14 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return symptom_crud.get_all(request)
 
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                symptom_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK)
 
     if component == "comorbidity":
         if request.method == 'POST':
@@ -98,6 +122,15 @@ def ListCreateView(request, component):
 	
         if request.method == 'GET':
             return comorbidity_crud.get_all(request)
+        
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                comorbidity_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK)
 
 
     if component == "dailyMedication":
@@ -107,6 +140,14 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return dailyMedication_crud.get_all(request)
 
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                dailyMedication_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK)
 
     if component == "flareMedication":
         if request.method == 'POST':
@@ -115,6 +156,14 @@ def ListCreateView(request, component):
         if request.method == 'GET':
             return flareMedication_crud.get_all(request)
 
+        # bulk update
+        if request.method == 'PUT':  
+            records = request.data
+            for record in records:
+                pk = record["id"]
+                request._full_data = record
+                flareMedication_crud.update(request, pk)
+            return Response(records, status=status.HTTP_200_OK)
 	
 @api_view(['GET', 'PUT', 'DELETE' ])
 @permission_classes((IsAuthenticated, ))
