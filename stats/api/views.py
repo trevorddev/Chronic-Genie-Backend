@@ -78,9 +78,14 @@ def add_daily_report(request):
 		if "symptoms" in record and record["symptoms"]:
 			for symptom in record["symptoms"]:
 				symptom_id = symptom["id"]
-				
+				rating = symptom.pop("rating", 0)
+				times = symptom.pop("times", [])
+
 				## https://stackoverflow.com/questions/4195242/django-model-object-with-foreign-key-creation
-				daily_report_symptom.objects.create(daily_report_id_id=general_record.id, symptom_id_id=symptom_id)
+				daily_report_symptom.objects.create(daily_report_id_id=general_record.id, 
+													symptom_id_id=symptom_id,
+													rating=rating,
+													times=json.dumps(times))
 
 
 		# adding comorbidity in daily_report_comorbidity
@@ -177,6 +182,8 @@ def get_daily_report(request):
 			for symptom in symptomss:
 				temp = symptom.symptom_id.__dict__
 				temp.pop('_state', None)
+				temp["rating"] = symptom.rating
+				temp["times"] = json.dumps(symptom.times)
 				result[date]["symptoms"].append(temp)
 
 

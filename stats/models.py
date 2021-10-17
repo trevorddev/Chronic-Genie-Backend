@@ -36,7 +36,8 @@ class daily_report_aggravator(models.Model):
 class daily_report_symptom(models.Model):
     daily_report_id         = models.ForeignKey(daily_report, on_delete=models.CASCADE)
     symptom_id              = models.ForeignKey(Symptom, on_delete=models.CASCADE)
-
+    rating                  = models.IntegerField(default=0)
+    times                   = models.CharField(max_length=100, blank=True, null=True, default="")
 
     def __str__(self):
         return self.daily_report_id.user.email + " / " + str(self.daily_report_id.date) + " / " + self.symptom_id.name
