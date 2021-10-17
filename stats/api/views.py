@@ -183,7 +183,7 @@ def get_daily_report(request):
 				temp = symptom.symptom_id.__dict__
 				temp.pop('_state', None)
 				temp["rating"] = symptom.rating
-				temp["times"] = json.dumps(symptom.times)
+				temp["times"] = json.loads(symptom.times)
 				result[date]["symptoms"].append(temp)
 
 
