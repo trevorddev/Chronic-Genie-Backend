@@ -16,7 +16,8 @@ from stats.models import (
 	daily_report_aggravator,
 	daily_report_symptom,
 	daily_report_comorbidity,
-	daily_report_flare_medication
+	daily_report_flare_medication,
+	daily_report_daily_medication
 )
 
 def month_converter(month):
@@ -107,6 +108,18 @@ def add_daily_report(request):
 				daily_report_flare_medication.objects.create(daily_report_id_id=general_record.id,
 															flare_medication_id_id=flare_medication_id,
 															pills=pills)
+
+
+		# adding flare medication in daily_report_daily_medication
+		if "dailyMedications" in record and record["dailyMedications"]:
+			for dailyMedication in record["dailyMedications"]:
+				daily_medication_id = dailyMedication["id"]
+				times = symptom.pop("times", [])
+			
+				## https://stackoverflow.com/questions/4195242/django-model-object-with-foreign-key-creation
+				daily_report_daily_medication.objects.create(daily_report_id_id=general_record.id,
+															daily_medication_id_id=daily_medication_id,
+															times=json.dumps(times))
 
 
 
@@ -215,6 +228,22 @@ def get_daily_report(request):
 				temp.pop('_state', None)
 				temp["pills"] = flareMedications.pills
 				result[date]["flareMedications"].append(temp)
+		
+		# get daily medications for a specific date
+		dailyMedicationss = daily_report_daily_medication.objects.filter(
+													daily_report_id= record["id"], 
+													daily_medication_id__selected=True,
+													daily_medication_id__user = user).select_related('daily_medication_id')
+		
+
+		
+		if dailyMedicationss:
+			result[date]["dailyMedications"] = []
+			for dailyMedications in dailyMedicationss:
+				temp = dailyMedications.daily_medication_id.__dict__
+				temp.pop('_state', None)
+				temp["times"] = json.loads(dailyMedications.times)
+				result[date]["dailyMedications"].append(temp)
 		
 		
 	return Response(data=result, status = status.HTTP_200_OK)

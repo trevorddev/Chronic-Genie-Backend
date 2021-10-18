@@ -59,3 +59,12 @@ class daily_report_flare_medication(models.Model):
 
     def __str__(self):
         return self.daily_report_id.user.email + " / " + str(self.daily_report_id.date) + " / " + self.flare_medication_id.name
+
+
+class daily_report_daily_medication(models.Model):
+    daily_report_id         = models.ForeignKey(daily_report, on_delete=models.CASCADE)
+    daily_medication_id     = models.ForeignKey(DailyMedication, on_delete=models.CASCADE)
+    times                   = models.CharField(max_length=100, blank=True, null=True, default="")
+
+    def __str__(self):
+        return self.daily_report_id.user.email + " / " + str(self.daily_report_id.date) + " / " + self.daily_medication_id.name
