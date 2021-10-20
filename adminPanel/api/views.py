@@ -24,12 +24,12 @@ from .serializers import(
 )
 
 
-@permission_classes((IsAuthenticated))
+@permission_classes((IsAuthenticated, IsAdminUser))
 class FoodAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Food.objects.all()
     serializer_class = FoodSerializer
 
-@permission_classes((IsAuthenticated))
+@permission_classes((IsAuthenticated, IsAdminUser))
 class FoodCreateRetrieve(generics.ListCreateAPIView):
     queryset = Food.objects.all()
     serializer_class = FoodSerializer
