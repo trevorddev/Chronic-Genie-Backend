@@ -114,7 +114,7 @@ def add_daily_report(request):
 		if "dailyMedications" in record and record["dailyMedications"]:
 			for dailyMedication in record["dailyMedications"]:
 				daily_medication_id = dailyMedication["id"]
-				times = symptom.pop("times", [])
+				times = dailyMedication.pop("times", [])
 			
 				## https://stackoverflow.com/questions/4195242/django-model-object-with-foreign-key-creation
 				daily_report_daily_medication.objects.create(daily_report_id_id=general_record.id,
