@@ -81,6 +81,8 @@ def add_daily_report(request):
 				symptom_id = symptom["id"]
 				rating = symptom.pop("rating", 0)
 				times = symptom.pop("times", [])
+				if type(times) is not list:
+					times = []
 
 				## https://stackoverflow.com/questions/4195242/django-model-object-with-foreign-key-creation
 				daily_report_symptom.objects.create(daily_report_id_id=general_record.id, 
@@ -115,7 +117,8 @@ def add_daily_report(request):
 			for dailyMedication in record["dailyMedications"]:
 				daily_medication_id = dailyMedication["id"]
 				times = dailyMedication.pop("times", [])
-			
+				if type(times) is not list:
+					times = []
 				## https://stackoverflow.com/questions/4195242/django-model-object-with-foreign-key-creation
 				daily_report_daily_medication.objects.create(daily_report_id_id=general_record.id,
 															daily_medication_id_id=daily_medication_id,
@@ -145,7 +148,7 @@ def get_daily_report(request):
 
 	result = {}
 	try:
-		records = daily_report.objects.filter(user=user, date__range=(startDate, endDate)).values()
+		records = daily_report.objects.filter(user=user, date__range=(startDate, endDate)).order_by('date').values()
 		
 	except Exception as ex:
 		print(str(ex))
@@ -196,7 +199,11 @@ def get_daily_report(request):
 				temp = symptom.symptom_id.__dict__
 				temp.pop('_state', None)
 				temp["rating"] = symptom.rating
-				temp["times"] = json.loads(symptom.times)
+				try:
+					temp["times"] = json.loads(symptom.times)
+				except:
+					temp["times"] = []
+				
 				result[date]["symptoms"].append(temp)
 
 
@@ -243,6 +250,10 @@ def get_daily_report(request):
 				temp = dailyMedications.daily_medication_id.__dict__
 				temp.pop('_state', None)
 				temp["times"] = json.loads(dailyMedications.times)
+				try:
+					temp["times"] = temp["times"] = json.loads(dailyMedications.times)
+				except:
+					temp["times"] = []
 				result[date]["dailyMedications"].append(temp)
 		
 		
