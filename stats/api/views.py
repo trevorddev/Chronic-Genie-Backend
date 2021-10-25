@@ -415,7 +415,7 @@ def customized_search(request):
 	response = {
 		"page_number": page_number,
 		"page_size": page_size,
-		"total_count": total_count - filter_count,
+		"total_count": total_count,
 		"filter_count": filter_count,
 		"total_pages": math.ceil(filter_count / page_size),
 		"result": result
