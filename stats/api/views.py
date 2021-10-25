@@ -34,15 +34,15 @@ def add_daily_report(request):
 
 	for date, record in request_body.items():
 		
+		# deleting existing particular date records
+		daily_report.objects.filter(user=user, date=date).delete()
+		if not record:
+			continue
+
 		date = record['date']
 		rating = record['rating']
 		notes = record['notes']
 
-		
-		
-
-		# deleting existing particular date records
-		daily_report.objects.filter(user=user, date=date).delete()
 
 		# adding general records
 
