@@ -81,7 +81,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                food_crud.update(request, pk)
+                response = food_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    food_crud.create(request)
             return Response(records, status=status.HTTP_200_OK) 
 
     if component == "aggravator":
@@ -97,7 +100,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                aggravator_crud.update(request, pk)
+                response = aggravator_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    aggravator_crud.create(request)
             return Response(records, status=status.HTTP_200_OK) 
     
     if component == "symptom":
@@ -113,7 +119,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                symptom_crud.update(request, pk)
+                response = symptom_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    symptom_crud.create(request)
             return Response(records, status=status.HTTP_200_OK)
 
     if component == "comorbidity":
@@ -129,7 +138,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                comorbidity_crud.update(request, pk)
+                response = comorbidity_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    comorbidity_crud.create(request)
             return Response(records, status=status.HTTP_200_OK)
 
 
@@ -146,7 +158,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                dailyMedication_crud.update(request, pk)
+                response = dailyMedication_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    dailyMedication_crud.create(request)
             return Response(records, status=status.HTTP_200_OK)
 
     if component == "flareMedication":
@@ -162,7 +177,10 @@ def ListCreateView(request, component):
             for record in records:
                 pk = record["id"]
                 request._full_data = record
-                flareMedication_crud.update(request, pk)
+                response = flareMedication_crud.update(request, pk)
+                if response.status_code == 404:
+                    # if record not found then create it
+                    flareMedication_crud.create(request)
             return Response(records, status=status.HTTP_200_OK)
 	
 @api_view(['GET', 'PUT', 'DELETE' ])
