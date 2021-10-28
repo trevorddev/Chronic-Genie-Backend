@@ -129,7 +129,10 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 			relativeLink = reverse(
 				'account:password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
 
-			redirect_url = request.data.get('redirect_url', '')
+			# redirect_url = request.data.get('redirect_url', '')
+
+			redirect_url = 'http://'+ current_site + '/api/account/reset'
+
 			absurl = 'http://'+current_site + relativeLink
 			email_body = 'Hello, \n Use link below to reset your password  \n' + \
 				absurl+"?redirect_url="+redirect_url
