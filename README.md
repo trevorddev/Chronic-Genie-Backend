@@ -10,4 +10,7 @@ sudo python3 manage.py runserver 0.0.0.0:8000
 sudo systemctl start nginx
 sudo systemctl status nginx
 
+sudo systemctl reload nginx
+sudo systemctl restart nginx
+
 
