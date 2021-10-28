@@ -29,7 +29,7 @@ DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-ALLOWED_HOSTS = ["54.153.85.99"]
+ALLOWED_HOSTS = ["18.144.64.5", "127.0.0.1"]
 
 # if DEBUG:
 #     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
