@@ -131,9 +131,9 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
 
 			# redirect_url = request.data.get('redirect_url', '')
 
-			redirect_url = 'http://'+ settings.server_ip + '/api/account/reset'
+			redirect_url = 'http://'+ settings.SERVER_IP + '/api/account/reset'
 
-			absurl = 'http://'+ settings.server_ip + relativeLink
+			absurl = 'http://'+ settings.SERVER_IP + relativeLink
 			email_body = 'Hello, \n Use link below to reset your password  \n' + \
 				absurl+"?redirect_url="+redirect_url
 			data = {'email_body': email_body, 'to_email': user.email,
