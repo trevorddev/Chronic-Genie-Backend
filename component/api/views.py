@@ -79,11 +79,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     food_crud.create(request)
-                request._full_data = record
+                    continue
                 response = food_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
@@ -101,11 +102,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     aggravator_crud.create(request)
-                request._full_data = record
+                    continue
                 response = aggravator_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
@@ -123,11 +125,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     symptom_crud.create(request)
-                request._full_data = record
+                    continue
                 response = symptom_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
@@ -145,11 +148,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     comorbidity_crud.create(request)
-                request._full_data = record
+                    continue
                 response = comorbidity_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
@@ -168,11 +172,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     dailyMedication_crud.create(request)
-                request._full_data = record
+                    continue
                 response = dailyMedication_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
@@ -190,11 +195,12 @@ def ListCreateView(request, component):
         if request.method == 'PUT':  
             records = request.data
             for record in records:
+                request._full_data = record
                 try:
                     pk = record["id"]
                 except:
                     flareMedication_crud.create(request)
-                request._full_data = record
+                    continue
                 response = flareMedication_crud.update(request, pk)
                 if response.status_code == 404:
                     # if record not found then create it
