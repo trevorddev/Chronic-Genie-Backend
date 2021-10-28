@@ -36,6 +36,8 @@ ALLOWED_HOSTS = ["18.144.64.5", "127.0.0.1", "localhost"]
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
 
+server_ip = '18.144.64.5'
+
 AWS_ACCESS_KEY_ID = 'AKIAVTQWOOT5PLDI7Q72'
 AWS_SECRET_ACCESS_KEY = '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'
 
