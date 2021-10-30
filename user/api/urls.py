@@ -11,7 +11,8 @@ from user.api.views import(
     account_properties_view,
     update_account_view,
     email_unsubscribe_view,
-    email_resubscribe_view
+    email_resubscribe_view,
+    AccountRetrieve,
 
 )
 
@@ -35,4 +36,5 @@ urlpatterns = [
     path('unsubscribe/<token>/', email_unsubscribe_view, name='unsubscribe-email'),
     path('resubscribe/<token>/', email_resubscribe_view, name='resubscribe-email'),
 
+    path('', AccountRetrieve.as_view()),
 ]

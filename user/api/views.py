@@ -3,9 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth import authenticate
-from user.api.serializers import RegistrationSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, AccountPropertiesSerializer
+from user.api.serializers import RegistrationSerializer, ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, AccountPropertiesSerializer, AccountSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import generics
 from django.shortcuts import render
@@ -20,6 +20,7 @@ from .utils import Util
 from django.http import HttpResponsePermanentRedirect
 import os
 from user.api.reset_password_form import SetPasswordForm
+from django_filters.rest_framework import DjangoFilterBackend
 
 from component.models import (
 	Food,
@@ -383,3 +384,13 @@ def add_user_to_narketing_email_list(user):
 		MarketingEmail(email=user.email).save()
 	except Exception as ex:
 		print(ex)
+
+
+
+@permission_classes((IsAuthenticated, IsAdminUser))
+class AccountRetrieve(generics.ListAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['gender', 'date_joined']

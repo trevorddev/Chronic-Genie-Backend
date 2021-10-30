@@ -175,3 +175,10 @@ class AccountPropertiesSerializer(serializers.ModelSerializer):
 		except KeyError:
 			pass
 		return user
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        
+        fields = '__all__'
