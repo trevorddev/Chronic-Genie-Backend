@@ -90,11 +90,13 @@ class ObtainAuthTokenView(APIView):
 				token = Token.objects.get(user=account)
 			except Token.DoesNotExist:
 				token = Token.objects.create(user=account)
+			context['status'] = True
 			context['response'] = 'Successfully authenticated.'
 			context['pk'] = account.pk
 			context['email'] = email.lower()
 			context['token'] = token.key
 		else:
+			context['status'] = False
 			context['response'] = 'Error'
 			context['error_message'] = 'Invalid credentials'
 
