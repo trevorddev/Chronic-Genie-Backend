@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 from adminPanel.models import (
 	Food,
@@ -12,7 +12,8 @@ from adminPanel.models import (
     Symptom,
     Comorbidity,
     DailyMedication,
-    FlareMedication
+    FlareMedication,
+    MarketingEmail
 )
 from .serializers import(
     FoodSerializer,
@@ -20,7 +21,8 @@ from .serializers import(
     SymptomSerializer,
     ComorbiditySerializer,
     DailyMedicationSerializer,
-    FlareMedicationSerializer
+    FlareMedicationSerializer,
+    MarketingEmailSerializer
 )
 
 
@@ -95,5 +97,10 @@ class FlareMedicationCreateRetrieve(generics.ListCreateAPIView):
     serializer_class = FlareMedicationSerializer
 
 
+@permission_classes((IsAuthenticated, IsAdminUser))
+class MarketingEmailRetrieve(generics.ListAPIView):
+    queryset = MarketingEmail.objects.all()
+    serializer_class = MarketingEmailSerializer
 
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['email', 'is_subscribed']

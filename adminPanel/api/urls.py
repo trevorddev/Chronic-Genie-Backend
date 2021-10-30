@@ -24,4 +24,5 @@ urlpatterns = [
     path('flareMedication/', views.FlareMedicationCreateRetrieve.as_view()),
     path('flareMedication/<pk>/', views.FlareMedicationAPIView.as_view()),
     
+    path('marketingEmail/', views.MarketingEmailRetrieve.as_view()),
 ]
