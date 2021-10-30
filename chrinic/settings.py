@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     'component',
     'stats',
     'adminPanel',
-    'rangefilter'
+    'rangefilter',
+    'django_filters'
 ]
 
 REST_FRAMEWORK = {
