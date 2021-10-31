@@ -13,7 +13,8 @@ from adminPanel.models import (
     Comorbidity,
     DailyMedication,
     FlareMedication,
-    MarketingEmail
+    MarketingEmail,
+    AppSettings
 )
 from .serializers import(
     FoodSerializer,
@@ -22,7 +23,8 @@ from .serializers import(
     ComorbiditySerializer,
     DailyMedicationSerializer,
     FlareMedicationSerializer,
-    MarketingEmailSerializer
+    MarketingEmailSerializer,
+    AppSettingSerializer
 )
 
 
@@ -96,6 +98,16 @@ class FlareMedicationCreateRetrieve(generics.ListCreateAPIView):
     queryset = FlareMedication.objects.all()
     serializer_class = FlareMedicationSerializer
 
+
+@permission_classes((IsAuthenticated, IsAdminUser))
+class appSettingAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AppSettings.objects.all()
+    serializer_class = AppSettingSerializer
+
+@permission_classes((IsAuthenticated, IsAdminUser))
+class appSettingCreateRetrieve(generics.ListCreateAPIView):
+    queryset = AppSettings.objects.all()
+    serializer_class = AppSettingSerializer
 
 @permission_classes((IsAuthenticated, IsAdminUser))
 class MarketingEmailRetrieve(generics.ListAPIView):

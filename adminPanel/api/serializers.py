@@ -6,7 +6,8 @@ from adminPanel.models import (
     Comorbidity,
     DailyMedication,
     FlareMedication,
-    MarketingEmail
+    MarketingEmail,
+    AppSettings
 ) 
 
 class FoodSerializer(serializers.ModelSerializer):
@@ -46,6 +47,13 @@ class DailyMedicationSerializer(serializers.ModelSerializer):
 class FlareMedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlareMedication
+        
+        fields = '__all__'
+
+
+class AppSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppSettings
         
         fields = '__all__'
 
