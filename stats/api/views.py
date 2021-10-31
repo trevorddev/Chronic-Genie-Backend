@@ -591,6 +591,10 @@ def users_summary(request):
 			)
 	response = {
 		"Total": total_count,
+		"weekly_count": sum(item['count'] for item in modified_weekly_result),
+		"monthly_count": sum(item['count'] for item in modified_monthly_result),
+		"yearly_count": sum(item['count'] for item in modified_yearly_result),
+		"all_count": sum(item['count'] for item in modified_five_year_result), 
 		"Weekly": modified_weekly_result,
 		"Monthly": modified_monthly_result,
 		"Yearly": modified_yearly_result,
