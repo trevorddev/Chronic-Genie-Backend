@@ -13,6 +13,7 @@ from user.api.views import(
     email_unsubscribe_view,
     email_resubscribe_view,
     AccountRetrieve,
+    email_check,
 
 )
 
@@ -23,6 +24,7 @@ app_name = 'account'
 
 urlpatterns = [
 	path('register', registration_view, name="register"),
+    path('email_check', email_check, name="email check"),
     path('login', ObtainAuthTokenView.as_view(), name="login"), # -> see user/api/views.py for response and url info
 	path('logout', Logout.as_view(), name="logout"),
     path('properties', account_properties_view, name="properties"),

@@ -396,3 +396,17 @@ class AccountRetrieve(generics.ListAPIView):
 
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['gender', 'date_joined']
+
+
+@api_view(['POST', ])
+@permission_classes([])
+@authentication_classes([])
+def email_check(request):
+
+	if request.method == 'POST':
+		data=request.data
+		
+		if Account.objects.filter(email=data['email']).exists():
+			return Response({'status': False, 'message': 'email unavailable'}, status=status.HTTP_200_OK)
+		
+		return Response({'status': True, 'message': 'email available'}, status=status.HTTP_200_OK)
