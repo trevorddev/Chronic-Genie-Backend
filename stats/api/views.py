@@ -271,6 +271,8 @@ def customized_search(request):
 	page_number = request_body["page_number"] if "page_number" in request_body and request_body["page_number"] else 1 
 	page_size = request_body["page_size"] if "page_size" in request_body and request_body["page_size"] else 1 
 	
+	page_size = 1000
+
 	is_export = request_body["is_export"] if "is_export" in request_body else False
 
 	if not filters:
