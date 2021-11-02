@@ -18,7 +18,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import Util
 from django.http import HttpResponsePermanentRedirect
-import os
+import os, json
 from user.api.reset_password_form import SetPasswordForm
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -410,3 +410,37 @@ def email_check(request):
 			return Response({'status': False, 'message': 'email unavailable'}, status=status.HTTP_200_OK)
 		
 		return Response({'status': True, 'message': 'email available'}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST',])
+@permission_classes((IsAuthenticated, IsAdminUser))
+def change_password(request):
+
+	try:
+		account = request.user
+	except Account.DoesNotExist:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+	request_body = json.loads(request.body)
+
+	if request.method == 'POST':
+		
+		data = {}
+		old_password = request_body['old_password'] if "old_password" in request_body and request_body["old_password"] else ""
+		new_password = request_body['new_password'] if "new_password" in request_body and request_body["new_password"] else ""
+		confirm_new_password = request_body['confirm_new_password'] if "confirm_new_password" in request_body and request_body["confirm_new_password"] else ""
+
+		if new_password != confirm_new_password:
+			data['status'] = 'False'
+			data['message'] = 'Password Mismatch'
+			
+		else:
+			if account.check_password(old_password):
+				account.set_password(new_password)
+				account.save()
+				data['status'] = 'True'
+				data['message'] = 'Password Reset'
+			else:
+				data['status'] = 'False'
+				data['message'] = 'Old Password is wrong'
+			
+		return Response(data, status=status.HTTP_200_OK)

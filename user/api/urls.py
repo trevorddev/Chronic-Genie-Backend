@@ -14,7 +14,7 @@ from user.api.views import(
     email_resubscribe_view,
     AccountRetrieve,
     email_check,
-
+    change_password,
 )
 
 from rest_framework.authtoken.views import obtain_auth_token
@@ -38,5 +38,6 @@ urlpatterns = [
     path('unsubscribe/<token>/', email_unsubscribe_view, name='unsubscribe-email'),
     path('resubscribe/<token>/', email_resubscribe_view, name='resubscribe-email'),
 
-    path('', AccountRetrieve.as_view()),
+    path('', AccountRetrieve.as_view(), name="accounts-retrieve-API"),
+    path('change_password/', change_password, name='change-password'),
 ]
