@@ -24,7 +24,7 @@ class Aggravator(models.Model):
     iconName                = models.CharField(max_length=100)
     backgroundColorName     = models.CharField(max_length=100)
     iconColorName           = models.CharField(max_length=100)
-    medicalInfo             = models.CharField(max_length=100, blank=True, default="")
+    medicalInfo             = models.CharField(max_length=1000, blank=True, default="")
     userCreated             = models.BooleanField(default=False)
     selected                = models.BooleanField(default=False)
 
@@ -40,7 +40,7 @@ class Symptom(models.Model):
     iconName                = models.CharField(max_length=100)
     backgroundColorName     = models.CharField(max_length=100)
     iconColorName           = models.CharField(max_length=100)
-    medicalInfo             = models.CharField(max_length=100, blank=True, default="")
+    medicalInfo             = models.CharField(max_length=1000, blank=True, default="")
     userCreated             = models.BooleanField(default=False)
     selected                = models.BooleanField(default=False)
 
@@ -92,7 +92,7 @@ class FlareMedication(models.Model):
     iconColorName           = models.CharField(max_length=100)
     dosage                  = models.FloatField(default=0)
     unit                    = models.CharField(max_length=20, default='mg')  
-    medicalInfo             = models.CharField(max_length=100, blank=True, default="")
+    medicalInfo             = models.CharField(max_length=1000, blank=True, default="")
     userCreated             = models.BooleanField(default=False)
     selected                = models.BooleanField(default=False)
 
