@@ -430,17 +430,17 @@ def change_password(request):
 		confirm_new_password = request_body['confirm_new_password'] if "confirm_new_password" in request_body and request_body["confirm_new_password"] else ""
 
 		if new_password != confirm_new_password:
-			data['status'] = 'False'
+			data['status'] = False
 			data['message'] = 'Password Mismatch'
 			
 		else:
 			if account.check_password(old_password):
 				account.set_password(new_password)
 				account.save()
-				data['status'] = 'True'
+				data['status'] = True
 				data['message'] = 'Password Reset'
 			else:
-				data['status'] = 'False'
+				data['status'] = False
 				data['message'] = 'Old Password is wrong'
 			
 		return Response(data, status=status.HTTP_200_OK)
