@@ -55,7 +55,7 @@ class daily_report_comorbidity(models.Model):
 class daily_report_flare_medication(models.Model):
     daily_report_id         = models.ForeignKey(daily_report, on_delete=models.CASCADE)
     flare_medication_id     = models.ForeignKey(FlareMedication, on_delete=models.CASCADE)
-    pills                   = models.IntegerField(default=0)
+    pills                   = models.FloatField(default=0)
 
     def __str__(self):
         return self.daily_report_id.user.email + " / " + str(self.daily_report_id.date) + " / " + self.flare_medication_id.name
