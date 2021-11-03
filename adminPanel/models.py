@@ -78,7 +78,7 @@ class DailyMedication(models.Model):
     iconName                = models.CharField(max_length=100)
     backgroundColorName     = models.CharField(max_length=100)
     iconColorName           = models.CharField(max_length=100)
-    dosage                  = models.IntegerField(default=0)
+    dosage                  = models.FloatField(default=0)
     selected                = models.BooleanField(default=False)
     enabled                 = models.BooleanField(default=False)
 
@@ -92,7 +92,7 @@ class FlareMedication(models.Model):
     iconName                = models.CharField(max_length=100)
     backgroundColorName     = models.CharField(max_length=100)
     iconColorName           = models.CharField(max_length=100)
-    dosage                  = models.IntegerField(default=0)
+    dosage                  = models.FloatField(default=0)
     medicalInfo             = models.CharField(max_length=100, blank=True, default="")
     selected                = models.BooleanField(default=False)
     enabled                 = models.BooleanField(default=False)
