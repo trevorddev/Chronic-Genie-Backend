@@ -135,7 +135,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 class AccountPropertiesSerializer(serializers.ModelSerializer):
 
 	main_conditions         = serializers.ListField(allow_empty=True)
-	medical_conditions      = serializers.ListField(allow_empty=True)
+	medical_conditions      = serializers.ListField(allow_empty=True, required = False, default=[])
 
 	class Meta:
 		model = Account
